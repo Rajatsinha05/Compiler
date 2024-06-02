@@ -1,6 +1,6 @@
 package com.Code.Compiler.Controllers;
 
-import com.Code.Compiler.Service.CodeExecutionService;
+import com.Code.Compiler.Service.Implementation.StudentServiceImpl;
 import com.Code.Compiler.models.CodeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import java.util.Map;
 public class CodeController {
 
     @Autowired
-    private CodeExecutionService codeExecutionService;
+    private StudentServiceImpl.CodeExecutionService codeExecutionService;
 
     private String lastOutput;
     @PostMapping("/submit")
