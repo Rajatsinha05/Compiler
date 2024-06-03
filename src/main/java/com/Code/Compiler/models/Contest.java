@@ -23,7 +23,7 @@ public class Contest {
     private String description;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private Integer totalMarks;
+    private int totalMarks;
 
     @Enumerated(EnumType.STRING)
     private DifficultLevel difficultyLevel;

@@ -27,6 +27,7 @@ public class QuestionServiceImpl {
     public Questions createQuestion(Questions question, User user) {
         question.setUser(user);
         return questionRepository.save(question);
+
     }
 
     public Questions updateQuestionDetails(Long id, Questions questionDetails) {
@@ -36,13 +37,14 @@ public class QuestionServiceImpl {
             existingQuestion.setTitle(questionDetails.getTitle());
             existingQuestion.setDescription(questionDetails.getDescription());
             existingQuestion.setDifficultLevel(questionDetails.getDifficultLevel());
-            existingQuestion.setConstraint(questionDetails.getConstraint());
+            existingQuestion.setConstraintValue(questionDetails.getConstraintValue());
             existingQuestion.setInput(questionDetails.getInput());
             existingQuestion.setExpectedOutput(questionDetails.getExpectedOutput());
             return questionRepository.save(existingQuestion);
         } else {
             throw new QuestionNotFoundException("Question not found with id: " + id);
         }
+
     }
 
     public void deleteQuestion(Long id) {

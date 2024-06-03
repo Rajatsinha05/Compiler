@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+
 @Entity
+@Table(name = "questions")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,21 +18,15 @@ public class Questions {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String title;
     private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('Low', 'Medium', 'High')")
-
     private DifficultLevel difficultLevel;
-
-    private String constraint;
+    private String constraintValue;
     private String input;
-
-    @ElementCollection
     private List<String> expectedOutput;
-
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "question_id")
     private List<Examples> examples;

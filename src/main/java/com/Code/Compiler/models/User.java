@@ -21,7 +21,7 @@ public class User {
     private String department;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Questions> questions;
     @ManyToMany
     @JoinTable(

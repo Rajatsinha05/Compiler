@@ -27,9 +27,8 @@ public class UserService implements IUserService {
         return userRepository.findById(id);
     }
 
-    public User createUser(User user, List<Long> studentIds) {
-        List<Students> students = studentRepository.findAllById(studentIds);
-        user.setStudents(students);
+    public User createUser(User user) {
+       ;
         return userRepository.save(user);
     }
 

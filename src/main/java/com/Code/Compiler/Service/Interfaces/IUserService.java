@@ -11,7 +11,7 @@ public interface IUserService {
 
     Optional<User> getUserById(Long id);
 
-    User createUser(User user, List<Long> studentIds);
+    User createUser(User user);
 
     User updateUserDetails(Long id, User userDetails);
 
