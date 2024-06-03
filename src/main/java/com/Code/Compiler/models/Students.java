@@ -1,10 +1,12 @@
 package com.Code.Compiler.models;
 
 import com.Code.Compiler.Enum.Role;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.List;
 
@@ -26,7 +28,8 @@ public class Students {
     @Enumerated(EnumType.STRING)
     private Role role = Role.STUDENT;
 
-    @ManyToMany(mappedBy = "students")
+
+    @ManyToMany(mappedBy = "students",fetch =FetchType.LAZY)
     private List<User> users;
 
     @ManyToMany(mappedBy = "enrolledStudents")

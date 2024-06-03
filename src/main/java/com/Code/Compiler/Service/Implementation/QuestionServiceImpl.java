@@ -24,12 +24,10 @@ public class QuestionServiceImpl {
         return questionRepository.findById(id);
     }
 
-    public Questions createQuestion(Questions question, User user) {
-        question.setUser(user);
+    public Questions createQuestion(Questions question) {
         return questionRepository.save(question);
 
     }
-
     public Questions updateQuestionDetails(Long id, Questions questionDetails) {
         Optional<Questions> question = questionRepository.findById(id);
         if (question.isPresent()) {

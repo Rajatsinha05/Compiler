@@ -27,10 +27,9 @@ public class QuestionController {
     }
 
     @PostMapping
-    public Questions createQuestion(@RequestBody Questions question, @RequestParam Long userId) {
-        User user = new User();
-        user.setId(userId);
-        return questionService.createQuestion(question, user);
+    public Questions createQuestion(@RequestBody Questions question) {
+
+        return questionService.createQuestion(question);
     }
 
     @PutMapping("/{id}")
