@@ -2,6 +2,8 @@ package com.Code.Compiler.models;
 
 import com.Code.Compiler.Enum.Role;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +16,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
+@JsonIdentityInfo(generator= ObjectIdGenerators.UUIDGenerator.class,
+        property="id")
 public class Students {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,7 @@
 package com.Code.Compiler.Service.Interfaces;
 
 
+import com.Code.Compiler.DTO.UserDTO;
 import com.Code.Compiler.models.User;
 
 import java.util.List;

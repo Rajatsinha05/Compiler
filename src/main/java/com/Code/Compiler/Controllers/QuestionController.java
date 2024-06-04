@@ -1,5 +1,6 @@
 package com.Code.Compiler.Controllers;
 
+import com.Code.Compiler.DTO.QuestionsDTO;
 import com.Code.Compiler.Service.Implementation.QuestionServiceImpl;
 import com.Code.Compiler.models.Questions;
 import com.Code.Compiler.models.User;
@@ -17,7 +18,7 @@ public class QuestionController {
     private QuestionServiceImpl questionService;
 
     @GetMapping
-    public List<Questions> getAllQuestions() {
+    public List<QuestionsDTO> getAllQuestions() {
         return questionService.getAllQuestions();
     }
 

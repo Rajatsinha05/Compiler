@@ -1,23 +1,33 @@
 package com.Code.Compiler.Service.Implementation;
 
+import com.Code.Compiler.DTO.QuestionsDTO;
+import com.Code.Compiler.DTO.UserDTO;
 import com.Code.Compiler.Exceptions.QuestionNotFoundException;
+import com.Code.Compiler.Mapper.QuestionsMapper;
+import com.Code.Compiler.Mapper.UserMapper;
 import com.Code.Compiler.Repository.QuestionsRepository;
 import com.Code.Compiler.models.Questions;
 import com.Code.Compiler.models.User;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionServiceImpl {
 
     @Autowired
     private QuestionsRepository questionRepository;
+@Transactional
+    public List<QuestionsDTO> getAllQuestions() {
 
-    public List<Questions> getAllQuestions() {
-        return questionRepository.findAll();
+    List<Questions> questions = questionRepository.findAll();
+    return questions.stream()
+            .map(QuestionsMapper::toDTO)
+            .collect(Collectors.toList());
     }
 
     public Optional<Questions> getQuestionById(Long id) {

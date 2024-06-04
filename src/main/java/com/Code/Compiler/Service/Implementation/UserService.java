@@ -1,5 +1,7 @@
 package com.Code.Compiler.Service.Implementation;
+import com.Code.Compiler.DTO.UserDTO;
 import com.Code.Compiler.Exceptions.UserNotFoundException;
+import com.Code.Compiler.Mapper.UserMapper;
 import com.Code.Compiler.Repository.StudentRepository;
 import com.Code.Compiler.Repository.UserRepository;
 import com.Code.Compiler.Service.Interfaces.IUserService;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
@@ -20,7 +23,11 @@ public class UserService implements IUserService {
     private StudentRepository studentRepository;
 
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+//        return userRepository.findAll().stream()
+//                .map(UserMapper::toDTO)
+//                .collect(Collectors.toList());
+
+        return  userRepository.findAll();
     }
 
     public Optional<User> getUserById(Long id) {
