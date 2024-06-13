@@ -9,7 +9,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -19,7 +23,7 @@ import java.util.List;
 
 @JsonIdentityInfo(generator= ObjectIdGenerators.UUIDGenerator.class,
         property="id")
-public class Students {
+public class Students implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,6 +33,7 @@ public class Students {
     private String password;
     private String grid;
     private String course;
+    private String branchCode;
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.STUDENT;
@@ -50,4 +55,34 @@ public class Students {
             inverseJoinColumns = @JoinColumn(name = "question_id")
     )
     private List<Questions> solvedQuestions;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        var role =  new SimpleGrantedAuthority("ROLE_" + this.role.name());
+        return List.of(role);
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
 }

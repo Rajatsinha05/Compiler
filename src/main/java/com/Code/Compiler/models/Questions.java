@@ -22,6 +22,7 @@ public class Questions {
     private Long id;
     private String title;
     private String description;
+    private String tags;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('Low', 'Medium', 'High')")

@@ -2,6 +2,7 @@ package com.Code.Compiler.Service.Interfaces;
 
 
 import com.Code.Compiler.DTO.UserDTO;
+import com.Code.Compiler.DTO.UserWithToken;
 import com.Code.Compiler.models.User;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface IUserService {
 
     Optional<User> getUserById(Long id);
 
-    User createUser(User user);
+    UserWithToken createUser(User user);
 
     User updateUserDetails(Long id, User userDetails);
 

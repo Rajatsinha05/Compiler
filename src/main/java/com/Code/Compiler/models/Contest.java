@@ -39,7 +39,6 @@ public class Contest {
             inverseJoinColumns = @JoinColumn(name = "question_id")
     )
     private List<Questions> questions;
-
     @ManyToMany
     @JoinTable(
             name = "contest_enrolled_students",

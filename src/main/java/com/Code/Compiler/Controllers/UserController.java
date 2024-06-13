@@ -1,8 +1,11 @@
 package com.Code.Compiler.Controllers;
 
+import com.Code.Compiler.DTO.LoginRequest;
 import com.Code.Compiler.DTO.UserDTO;
+import com.Code.Compiler.DTO.UserWithToken;
 import com.Code.Compiler.Service.Implementation.UserService;
 import com.Code.Compiler.models.User;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +33,15 @@ public class UserController {
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User newUser = userService.createUser(user);
+    @PostMapping("/signup")
+    public ResponseEntity<UserWithToken> createUser(@RequestBody User user) {
+
+        UserWithToken newUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    }
+    @PostMapping("/login")
+    public ResponseEntity<UserWithToken> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(userService.loginUser(loginRequest));
     }
 
     @PutMapping("/{id}")

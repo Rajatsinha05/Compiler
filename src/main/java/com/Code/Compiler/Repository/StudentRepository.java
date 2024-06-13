@@ -1,9 +1,11 @@
 package com.Code.Compiler.Repository;
 
 import com.Code.Compiler.models.Students;
+import com.Code.Compiler.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Students,Long> {
+    public User findByEmail(String email);
 }
