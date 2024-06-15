@@ -28,41 +28,32 @@ public class LoginServiceImpl {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-//    public UserWithToken loginUser(@Valid LoginRequest loginRequest) {
-//        User existingUser = userRepository.findByEmail(loginRequest.getEmail());
-//        Students existingStudent = studentRepository.findByEmail(loginRequest.getEmail());
-//
-//        if (existingUser != null) {
-//            if (!passwordEncoder.matches(loginRequest.getPassword(), existingUser.getPassword())) {
-//                throw new ValidationException("Invalid password");
-//            }
-//            String token = jwtService.generateToken(existingUser.toString());
-//            return new UserWithToken(existingUser.toString(), token);
-//        } else if (existingStudent != null) {
-//            if (!passwordEncoder.matches(loginRequest.getPassword(), existingStudent.getPassword())) {
-//                throw new ValidationException("Invalid password");
-//            }
-//            String token = jwtService.generateToken(existingStudent.toString());
-//            return new UserWithToken(existingStudent.toString(), token);
-//        } else {
-//            throw new ValidationException("User not found: " + loginRequest.getEmail());
-//        }
-//    }
-public UserWithToken loginUser(@Valid LoginRequest loginRequest) {
-    User existingUser = userRepository.findByEmail(loginRequest.getEmail());
+    public UserWithToken loginUser(@Valid LoginRequest loginRequest) {
+        User existingUser = userRepository.findByEmail(loginRequest.getEmail());
         Students existingStudent = studentRepository.findByEmail(loginRequest.getEmail());
-    if (existingUser == null) {
-        throw new ValidationException("User not found");
-    }
-    if (!passwordEncoder.matches(loginRequest.getPassword(), existingUser.getPassword())) {
-        throw new ValidationException("Invalid password");
-    }
-    String token= jwtService.generateToken(existingUser.getUsername());
-    String userToken =existingUser.toString();
-    String userDetailsToken= jwtService.generateToken(userToken);
 
-    // Return user and token
-    return new UserWithToken(userDetailsToken, token);
+        if (existingUser != null) {
+            if (!passwordEncoder.matches(loginRequest.getPassword(), existingUser.getPassword())) {
+                throw new ValidationException("Invalid password");
+            }
 
-}
+            String token = jwtService.generateToken(existingUser.getUsername());
+            String userDetailsToken = jwtService.generateToken(existingUser.toString());
+
+            return new UserWithToken(userDetailsToken, token);
+
+        } else if (existingStudent != null) {
+            if (!passwordEncoder.matches(loginRequest.getPassword(), existingStudent.getPassword())) {
+                throw new ValidationException("Invalid password");
+            }
+
+            String token = jwtService.generateToken(existingStudent.getUsername());
+            String userDetailsToken = jwtService.generateToken(existingStudent.toString());
+
+            return new UserWithToken(userDetailsToken, token);
+
+        } else {
+            throw new ValidationException("User not found: " + loginRequest.getEmail());
+        }
+    }
 }
