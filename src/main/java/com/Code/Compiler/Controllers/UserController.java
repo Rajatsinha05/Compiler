@@ -3,6 +3,7 @@ package com.Code.Compiler.Controllers;
 import com.Code.Compiler.DTO.LoginRequest;
 import com.Code.Compiler.DTO.UserDTO;
 import com.Code.Compiler.DTO.UserWithToken;
+import com.Code.Compiler.Service.Implementation.LoginServiceImpl;
 import com.Code.Compiler.Service.Implementation.UserService;
 import com.Code.Compiler.models.User;
 import jakarta.validation.Valid;
@@ -20,7 +21,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
+    @Autowired
+   private LoginServiceImpl loginService;
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
@@ -41,7 +43,7 @@ public class UserController {
     }
     @PostMapping("/login")
     public ResponseEntity<UserWithToken> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(userService.loginUser(loginRequest));
+        return ResponseEntity.ok(loginService.loginUser(loginRequest));
     }
 
     @PutMapping("/{id}")

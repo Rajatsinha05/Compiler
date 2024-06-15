@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/users/**").permitAll()
+                                .requestMatchers("/submit").permitAll()
                                 .requestMatchers(HttpMethod.POST,"/contests").hasAnyRole("ADMIN","SUPERADMIN")
                                 .requestMatchers(HttpMethod.DELETE,"/contests").hasRole("SUPERADMIN")
                                 .requestMatchers(HttpMethod.PUT,"/contests").hasAnyRole("ADMIN","SUPERADMIN")

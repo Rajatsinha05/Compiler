@@ -4,9 +4,12 @@ package com.Code.Compiler.Service.Implementation;
 
 import com.Code.Compiler.Exceptions.StudentNotFoundException;
 import com.Code.Compiler.Repository.StudentRepository;
+import com.Code.Compiler.Repository.UserRepository;
 import com.Code.Compiler.Service.Interfaces.IStudentService;
 import com.Code.Compiler.models.Students;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -24,6 +27,14 @@ public class StudentServiceImpl implements IStudentService {
 
     @Autowired
     private StudentRepository studentRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    public StudentServiceImpl(UserRepository userRepository, JwtService jwtService) {
+
+        this.passwordEncoder = new BCryptPasswordEncoder();
+    }
+
 
     public List<Students> getAllStudents() {
         return studentRepository.findAll();
@@ -34,6 +45,12 @@ public class StudentServiceImpl implements IStudentService {
     }
 
     public Students createStudent(Students student) {
+
+        String password = student.getPassword();
+        if (password.length() < 8) {
+            throw new ValidationException("Password must be at least 8 characters long");
+        }
+        student.setPassword(passwordEncoder.encode(password));
         return studentRepository.save(student);
     }
 

@@ -69,23 +69,23 @@ public class UserService implements IUserService {
         return new UserWithToken(userDetailsToken, token);
     }
 
-//    login user
-public UserWithToken loginUser(@Valid LoginRequest loginRequest) {
-    User existingUser = userRepository.findByEmail(loginRequest.getEmail());
-    if (existingUser == null) {
-        throw new ValidationException("User not found");
-    }
-    if (!passwordEncoder.matches(loginRequest.getPassword(), existingUser.getPassword())) {
-        throw new ValidationException("Invalid password");
-    }
-    String token= jwtService.generateToken(existingUser.getUsername());
-    String userToken =existingUser.toString();
-    String userDetailsToken= jwtService.generateToken(userToken);
+    //    login user
+    public UserWithToken loginUser(@Valid LoginRequest loginRequest) {
+        User existingUser = userRepository.findByEmail(loginRequest.getEmail());
+        if (existingUser == null) {
+            throw new ValidationException("User not found");
+        }
+        if (!passwordEncoder.matches(loginRequest.getPassword(), existingUser.getPassword())) {
+            throw new ValidationException("Invalid password");
+        }
+        String token= jwtService.generateToken(existingUser.getUsername());
+        String userToken =existingUser.toString();
+        String userDetailsToken= jwtService.generateToken(userToken);
 
-    // Return user and token
-    return new UserWithToken(userDetailsToken, token);
+        // Return user and token
+        return new UserWithToken(userDetailsToken, token);
 
-}
+    }
 
 
     public User updateUserDetails(Long id, User userDetails) {

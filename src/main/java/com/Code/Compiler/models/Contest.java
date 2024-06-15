@@ -24,8 +24,8 @@ public class Contest {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private int totalMarks;
-
     @Enumerated(EnumType.STRING)
+    @Column(name = "difficulty_level")
     private DifficultLevel difficultyLevel;
 
     @ManyToOne
@@ -39,6 +39,7 @@ public class Contest {
             inverseJoinColumns = @JoinColumn(name = "question_id")
     )
     private List<Questions> questions;
+
     @ManyToMany
     @JoinTable(
             name = "contest_enrolled_students",

@@ -13,8 +13,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Questions {
     @Id
@@ -25,7 +23,7 @@ public class Questions {
     private String tags;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('Low', 'Medium', 'High')")
+    @Column(columnDefinition = "ENUM( 'EASY','MEDIUM','HARD')")
     private DifficultLevel difficultLevel;
     private String constraintValue;
     private String input;
