@@ -1,6 +1,7 @@
 package com.Code.Compiler.Service.Implementation;
 
 import com.Code.Compiler.DTO.ContestDTO;
+import com.Code.Compiler.Enum.Role;
 import com.Code.Compiler.Exceptions.ContestNotFoundException;
 import com.Code.Compiler.Exceptions.UserNotFoundException;
 import com.Code.Compiler.Mapper.ContestMapper;
@@ -14,6 +15,7 @@ import com.Code.Compiler.models.Questions;
 import com.Code.Compiler.models.Students;
 import com.Code.Compiler.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +39,21 @@ public class ContestServiceImpl implements IContestService {
 
     @Override
     public List<ContestDTO> getAllContests() {
-        return contestRepository.findAll().stream().map(ContestMapper::toDTO).collect(Collectors.toList());
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User loggedInUser = userRepository.findByEmail(email);
+
+        if (loggedInUser.getRole() == Role.STUDENT) {
+            Students student = studentRepository.findById(loggedInUser.getId())
+                    .orElseThrow(() -> new UserNotFoundException("Student not found with user id: " + loggedInUser.getId()));
+            return contestRepository.findAll().stream()
+                    .filter(contest -> contest.getEnrolledStudents().contains(student))
+                    .map(ContestMapper::toDTO)
+                    .collect(Collectors.toList());
+        } else {
+            return contestRepository.findAll().stream()
+                    .map(ContestMapper::toDTO)
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override

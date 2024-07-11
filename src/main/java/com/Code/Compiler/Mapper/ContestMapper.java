@@ -1,6 +1,7 @@
 package com.Code.Compiler.Mapper;
 
 import com.Code.Compiler.DTO.ContestDTO;
+import com.Code.Compiler.DTO.QuestionsDTO;
 import com.Code.Compiler.models.Contest;
 import com.Code.Compiler.models.Questions;
 import com.Code.Compiler.models.Students;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 public class ContestMapper {
     public static ContestDTO toDTO(Contest contest) {
         List<Long> questionIds = contest.getQuestions() != null ? contest.getQuestions().stream().map(Questions::getId).collect(Collectors.toList()) : null;
+        List<QuestionsDTO> questions = contest.getQuestions() != null ? contest.getQuestions().stream().map(QuestionsMapper::toDTO).collect(Collectors.toList()) : null;
         List<Long> enrolledStudentIds = contest.getEnrolledStudents() != null ? contest.getEnrolledStudents().stream().map(Students::getId).collect(Collectors.toList()) : null;
         return new ContestDTO(
                 contest.getId(),
@@ -23,6 +25,7 @@ public class ContestMapper {
                 contest.getDifficultyLevel(),
                 contest.getCreatedBy() != null ? contest.getCreatedBy().getId() : null,
                 questionIds,
+                questions,
                 enrolledStudentIds
         );
     }

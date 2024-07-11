@@ -21,5 +21,6 @@ public class ContestDTO {
     private DifficultLevel difficultyLevel;
     private Long createdById;
     private List<Long> questionIds;
+    private List<QuestionsDTO> questions;
     private List<Long> enrolledStudentIds;
 }

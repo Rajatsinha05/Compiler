@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "id")
-@ToString
+
 public class Students implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,17 +38,19 @@ public class Students implements UserDetails {
     @ManyToMany(mappedBy = "students", fetch = FetchType.LAZY)
     private List<User> users;
 
-    @ManyToMany(mappedBy = "enrolledStudents")
+    @ManyToMany(mappedBy = "enrolledStudents" , fetch = FetchType.LAZY)
     private List<Contest> enrolledContests;
 
-    @ManyToMany(mappedBy = "enrolledStudents")
+    @ManyToMany(mappedBy = "enrolledStudents" , fetch = FetchType.LAZY)
     private List<Contest> attemptedContests;
 
-    @ManyToMany
+    @ManyToMany(  fetch = FetchType.LAZY)
     @JoinTable(
             name = "student_solved_questions",
             joinColumns = @JoinColumn(name = "student_id"),
             inverseJoinColumns = @JoinColumn(name = "question_id")
+
+
     )
     private List<Questions> solvedQuestions;
 
@@ -82,5 +83,17 @@ public class Students implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+    @Override
+    public String toString() {
+        return "Students{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", grid='" + grid + '\'' +
+                ", course='" + course + '\'' +
+                ", branchCode='" + branchCode + '\'' +
+                ", role=" + role +
+                '}';
     }
 }
