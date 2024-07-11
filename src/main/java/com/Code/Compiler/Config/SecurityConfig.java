@@ -1,12 +1,10 @@
 package com.Code.Compiler.Config;
 
-
 import com.Code.Compiler.Config.Filter.JwtAuthFilter;
 import com.Code.Compiler.Service.Implementation.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -14,8 +12,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -40,13 +38,13 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/users/**").permitAll()
                                 .requestMatchers("/submit").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/contests").hasAnyRole("ADMIN","SUPERADMIN")
-                                .requestMatchers(HttpMethod.DELETE,"/contests").hasRole("SUPERADMIN")
-                                .requestMatchers(HttpMethod.PUT,"/contests").hasAnyRole("ADMIN","SUPERADMIN")
+//                                .requestMatchers(HttpMethod.POST, "/contests").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPERADMIN")
+//                                .requestMatchers(HttpMethod.DELETE, "/contests").hasAuthority("ROLE_SUPERADMIN")
+//                                .requestMatchers(HttpMethod.PUT, "/contests").hasAnyAuthority("ROLE_ADMIN", "ROLE_SUPERADMIN")
                                 .anyRequest().authenticated()
                 )
-                .authenticationProvider(authenticationProvider())
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -62,7 +60,6 @@ public class SecurityConfig {
         authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
-
     }
 
     @Bean

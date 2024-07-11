@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,7 +14,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Questions {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,20 +24,21 @@ public class Questions {
     private String tags;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM( 'EASY','MEDIUM','HARD')")
     private DifficultLevel difficultLevel;
     private String constraintValue;
     private String input;
-    private List<String> expectedOutput;
+    private String expectedOutput;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "question_id")
-    private List<Examples> examples;
+    @ToString.Exclude
+    private List<Examples> examples = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToMany(mappedBy = "solvedQuestions")
-    private List<Students> solvedStudents;
+    @ToString.Exclude
+    private List<Students> solvedStudents = new ArrayList<>();
 }

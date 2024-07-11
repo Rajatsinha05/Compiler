@@ -2,8 +2,6 @@ package com.Code.Compiler.Controllers;
 
 import com.Code.Compiler.DTO.QuestionsDTO;
 import com.Code.Compiler.Service.Implementation.QuestionServiceImpl;
-import com.Code.Compiler.models.Questions;
-import com.Code.Compiler.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,19 +21,18 @@ public class QuestionController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Questions> getQuestionById(@PathVariable Long id) {
+    public Optional<QuestionsDTO> getQuestionById(@PathVariable Long id) {
         return questionService.getQuestionById(id);
     }
 
     @PostMapping
-    public Questions createQuestion(@RequestBody Questions question) {
-
-        return questionService.createQuestion(question);
+    public QuestionsDTO createQuestion(@RequestBody QuestionsDTO questionDTO) {
+        return questionService.createQuestion(questionDTO);
     }
 
     @PutMapping("/{id}")
-    public Questions updateQuestion(@PathVariable Long id, @RequestBody Questions questionDetails) {
-        return questionService.updateQuestionDetails(id, questionDetails);
+    public QuestionsDTO updateQuestion(@PathVariable Long id, @RequestBody QuestionsDTO questionDTO) {
+        return questionService.updateQuestionDetails(id, questionDTO);
     }
 
     @DeleteMapping("/{id}")

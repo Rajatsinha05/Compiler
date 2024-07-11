@@ -1,25 +1,23 @@
 package com.Code.Compiler.DTO;
 
-
-import com.Code.Compiler.Enum.DifficultLevel;
-import jakarta.transaction.Transactional;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
-@Setter
-@Getter
-@ToString
-@Transactional
-@NoArgsConstructor
+
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class QuestionsDTO {
     private Long id;
     private String title;
     private String description;
-    private DifficultLevel difficultLevel;
+    private String tags;
+    private String difficultLevel;
     private String constraintValue;
     private String input;
-    private List<String> expectedOutput;
-    private UserDTO user;
+    private String expectedOutput;
+    private Long userId;
+    private List<ExamplesDTO> examples;
 }
-

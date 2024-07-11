@@ -1,7 +1,6 @@
 package com.Code.Compiler.models;
 
 import com.Code.Compiler.Enum.DifficultLevel;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,8 +23,8 @@ public class Contest {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private int totalMarks;
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "difficulty_level")
     private DifficultLevel difficultyLevel;
 
     @ManyToOne

@@ -33,6 +33,8 @@ public class CodeExecutionService {
                     return runCSharp(code, inputData);
                 case "php":
                     return runPhp(code, inputData);
+                case "kotlin":
+                    return compileAndRunKotlin(code, inputData);
                 default:
                     return "Unsupported language";
             }
@@ -44,20 +46,15 @@ public class CodeExecutionService {
 
     private String compileAndRunJava(String code, String inputData) {
         try {
-            // Save the Java code to a file
             Files.write(Paths.get("Main.java"), code.getBytes());
 
-            // Compile Java code
             Process compileProcess = new ProcessBuilder("javac", "Main.java").start();
             compileProcess.waitFor();
             if (compileProcess.exitValue() != 0) {
                 return readProcessOutput(compileProcess.getErrorStream());
             }
 
-            // Execute compiled Java code
             Process execProcess = new ProcessBuilder("java", "Main").start();
-
-            // Redirect input stream if inputData is provided
             if (inputData != null && !inputData.isEmpty()) {
                 execProcess.getOutputStream().write(inputData.getBytes());
                 execProcess.getOutputStream().close();
@@ -71,13 +68,9 @@ public class CodeExecutionService {
 
     private String runJavaScript(String code, String inputData) {
         try {
-            // Save the JavaScript code to a file
             Files.write(Paths.get("Main.js"), code.getBytes());
 
-            // Execute JavaScript code with Node.js
             Process execProcess = new ProcessBuilder("node", "Main.js").start();
-
-            // Redirect input stream if inputData is provided
             if (inputData != null && !inputData.isEmpty()) {
                 execProcess.getOutputStream().write(inputData.getBytes());
                 execProcess.getOutputStream().close();
@@ -91,20 +84,15 @@ public class CodeExecutionService {
 
     private String compileAndRunC(String code, String inputData) {
         try {
-            // Save the C code to a file
             Files.write(Paths.get("Main.c"), code.getBytes());
 
-            // Compile C code
             Process compileProcess = new ProcessBuilder("gcc", "-o", "Main", "Main.c").start();
             compileProcess.waitFor();
             if (compileProcess.exitValue() != 0) {
                 return readProcessOutput(compileProcess.getErrorStream());
             }
 
-            // Execute compiled C code
             Process execProcess = new ProcessBuilder("./Main").start();
-
-            // Redirect input stream if inputData is provided
             if (inputData != null && !inputData.isEmpty()) {
                 execProcess.getOutputStream().write(inputData.getBytes());
                 execProcess.getOutputStream().close();
@@ -118,20 +106,15 @@ public class CodeExecutionService {
 
     private String compileAndRunCPP(String code, String inputData) {
         try {
-            // Save the C++ code to a file
             Files.write(Paths.get("Main.cpp"), code.getBytes());
 
-            // Compile C++ code
             Process compileProcess = new ProcessBuilder("g++", "-o", "Main", "Main.cpp").start();
             compileProcess.waitFor();
             if (compileProcess.exitValue() != 0) {
                 return readProcessOutput(compileProcess.getErrorStream());
             }
 
-            // Execute compiled C++ code
             Process execProcess = new ProcessBuilder("./Main").start();
-
-            // Redirect input stream if inputData is provided
             if (inputData != null && !inputData.isEmpty()) {
                 execProcess.getOutputStream().write(inputData.getBytes());
                 execProcess.getOutputStream().close();
@@ -145,13 +128,9 @@ public class CodeExecutionService {
 
     private String runPython(String code, String inputData) {
         try {
-            // Save the Python code to a file
             Files.write(Paths.get("Main.py"), code.getBytes());
 
-            // Execute Python code
             Process execProcess = new ProcessBuilder("python3", "Main.py").start();
-
-            // Redirect input stream if inputData is provided
             if (inputData != null && !inputData.isEmpty()) {
                 execProcess.getOutputStream().write(inputData.getBytes());
                 execProcess.getOutputStream().close();
@@ -165,13 +144,9 @@ public class CodeExecutionService {
 
     private String runDart(String code, String inputData) {
         try {
-            // Save the Dart code to a file
             Files.write(Paths.get("Main.dart"), code.getBytes());
 
-            // Execute Dart code
             Process execProcess = new ProcessBuilder("dart", "Main.dart").start();
-
-            // Redirect input stream if inputData is provided
             if (inputData != null && !inputData.isEmpty()) {
                 execProcess.getOutputStream().write(inputData.getBytes());
                 execProcess.getOutputStream().close();
@@ -185,20 +160,15 @@ public class CodeExecutionService {
 
     private String runTypeScript(String code, String inputData) {
         try {
-            // Save the TypeScript code to a file
             Files.write(Paths.get("Main.ts"), code.getBytes());
 
-            // Compile TypeScript code to JavaScript
             Process compileProcess = new ProcessBuilder("tsc", "Main.ts").start();
             compileProcess.waitFor();
             if (compileProcess.exitValue() != 0) {
                 return readProcessOutput(compileProcess.getErrorStream());
             }
 
-            // Execute compiled JavaScript code with Node.js
             Process execProcess = new ProcessBuilder("node", "Main.js").start();
-
-            // Redirect input stream if inputData is provided
             if (inputData != null && !inputData.isEmpty()) {
                 execProcess.getOutputStream().write(inputData.getBytes());
                 execProcess.getOutputStream().close();
@@ -212,20 +182,15 @@ public class CodeExecutionService {
 
     private String runCSharp(String code, String inputData) {
         try {
-            // Save the C# code to a file
             Files.write(Paths.get("Main.cs"), code.getBytes());
 
-            // Compile C# code
             Process compileProcess = new ProcessBuilder("csc", "/out:Main.exe", "Main.cs").start();
             compileProcess.waitFor();
             if (compileProcess.exitValue() != 0) {
                 return readProcessOutput(compileProcess.getErrorStream());
             }
 
-            // Execute compiled C# code
             Process execProcess = new ProcessBuilder("mono", "Main.exe").start();
-
-            // Redirect input stream if inputData is provided
             if (inputData != null && !inputData.isEmpty()) {
                 execProcess.getOutputStream().write(inputData.getBytes());
                 execProcess.getOutputStream().close();
@@ -239,13 +204,9 @@ public class CodeExecutionService {
 
     private String runPhp(String code, String inputData) {
         try {
-            // Save the PHP code to a file
             Files.write(Paths.get("Main.php"), code.getBytes());
 
-            // Execute PHP code
             Process execProcess = new ProcessBuilder("php", "Main.php").start();
-
-            // Redirect input stream if inputData is provided
             if (inputData != null && !inputData.isEmpty()) {
                 execProcess.getOutputStream().write(inputData.getBytes());
                 execProcess.getOutputStream().close();
@@ -257,6 +218,27 @@ public class CodeExecutionService {
         }
     }
 
+    private String compileAndRunKotlin(String code, String inputData) {
+        try {
+            Files.write(Paths.get("Main.kt"), code.getBytes());
+
+            Process compileProcess = new ProcessBuilder("kotlinc", "Main.kt", "-include-runtime", "-d", "Main.jar").start();
+            compileProcess.waitFor();
+            if (compileProcess.exitValue() != 0) {
+                return readProcessOutput(compileProcess.getErrorStream());
+            }
+
+            Process execProcess = new ProcessBuilder("java", "-jar", "Main.jar").start();
+            if (inputData != null && !inputData.isEmpty()) {
+                execProcess.getOutputStream().write(inputData.getBytes());
+                execProcess.getOutputStream().close();
+            }
+
+            return readProcessOutput(execProcess);
+        } catch (IOException | InterruptedException e) {
+            return "Error: " + e.getMessage();
+        }
+    }
 
     private String readProcessOutput(Process process) throws IOException {
         StringBuilder output = new StringBuilder();
@@ -292,6 +274,8 @@ public class CodeExecutionService {
             Files.deleteIfExists(Paths.get("Main.ts"));
             Files.deleteIfExists(Paths.get("Main.cs"));
             Files.deleteIfExists(Paths.get("Main.php"));
+            Files.deleteIfExists(Paths.get("Main.kt"));
+            Files.deleteIfExists(Paths.get("Main.jar"));
             Files.deleteIfExists(Paths.get("Main"));
             Files.deleteIfExists(Paths.get("Main.exe"));
         } catch (IOException e) {

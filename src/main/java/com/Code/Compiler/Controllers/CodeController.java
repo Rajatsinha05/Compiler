@@ -1,8 +1,7 @@
 package com.Code.Compiler.Controllers;
 
+import com.Code.Compiler.DTO.CodeRequestDto;
 import com.Code.Compiler.Service.Implementation.CodeExecutionService;
-import com.Code.Compiler.Service.Implementation.StudentServiceImpl;
-import com.Code.Compiler.models.CodeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,7 @@ public class CodeController {
 
     private String lastOutput;
     @PostMapping("/submit")
-    public ResponseEntity<Map<String, String>> submitCode(@RequestBody CodeRequest codeRequest) {
+    public ResponseEntity<Map<String, String>> submitCode(@RequestBody CodeRequestDto codeRequest) {
         String code = codeRequest.getCode();
         String language = codeRequest.getLanguage();
         String inputData = codeRequest.getInputData();

@@ -1,7 +1,7 @@
 package com.Code.Compiler.Controllers;
 
+import com.Code.Compiler.DTO.ContestDTO;
 import com.Code.Compiler.Service.Implementation.ContestServiceImpl;
-import com.Code.Compiler.models.Contest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,27 +17,27 @@ public class ContestController {
     private ContestServiceImpl contestService;
 
     @GetMapping
-    public List<Contest> getAllContests() {
+    public List<ContestDTO> getAllContests() {
         return contestService.getAllContests();
     }
 
     @GetMapping("/{id}")
-    public Contest getContestById(@PathVariable Long id) {
+    public ContestDTO getContestById(@PathVariable Long id) {
         return contestService.getContestById(id)
                 .orElseThrow(() -> new RuntimeException("Contest not found with id: " + id));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
-    @PostMapping("/{userId}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Contest createContest(@PathVariable Long userId ,@RequestBody Contest contest) {
-        return contestService.createContest(contest, userId);
+    public ContestDTO createContest(@RequestBody ContestDTO contestDTO) {
+        return contestService.createContest(contestDTO);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
     @PutMapping("/{id}")
-    public Contest updateContestDetails(@PathVariable Long id, @RequestBody Contest contestDetails) {
-        return contestService.updateContestDetails(id, contestDetails);
+    public ContestDTO updateContestDetails(@PathVariable Long id, @RequestBody ContestDTO contestDTO) {
+        return contestService.updateContestDetails(id, contestDTO);
     }
 
     @PreAuthorize("hasRole('SUPERADMIN')")
