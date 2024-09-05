@@ -1,6 +1,8 @@
 package com.Code.Compiler.Service.Implementation;
 
 import com.Code.Compiler.DTO.ContestDTO;
+import com.Code.Compiler.DTO.QuestionDTO;
+import com.Code.Compiler.DTO.StudentDTO;
 import com.Code.Compiler.Enum.Role;
 import com.Code.Compiler.Exceptions.ContestNotFoundException;
 import com.Code.Compiler.Exceptions.UserNotFoundException;
@@ -37,24 +39,100 @@ public class ContestServiceImpl implements IContestService {
     @Autowired
     private StudentRepository studentRepository;
 
-    @Override
-    public List<ContestDTO> getAllContests() {
-        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User loggedInUser = userRepository.findByEmail(email);
 
-        if (loggedInUser.getRole() == Role.STUDENT) {
-            Students student = studentRepository.findById(loggedInUser.getId())
-                    .orElseThrow(() -> new UserNotFoundException("Student not found with user id: " + loggedInUser.getId()));
-            return contestRepository.findAll().stream()
+//    login students
+
+public List<ContestDTO> getAllContestsForLoggedInStudent() {
+    // Retrieve the principal of the currently logged-in user (token-based authentication)
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+    if (principal instanceof User) {
+        User loggedInUser = (User) principal;
+        // Find the user by email
+        User user = userRepository.findByEmail(loggedInUser.getEmail());
+        if (user == null) {
+            throw new UserNotFoundException("User not found with email: " + loggedInUser.getUsername());
+        }
+
+        // Check if the user has the role of STUDENT
+        if (user.getRole() == Role.STUDENT) {
+            // Find the associated student by user ID
+            Students student = studentRepository.findById(user.getId())
+                    .orElseThrow(() -> new UserNotFoundException("Student not found with user id: " + user.getId()));
+
+            // Retrieve all contests where the student is enrolled
+            List<Contest> contests = contestRepository.findAll().stream()
                     .filter(contest -> contest.getEnrolledStudents().contains(student))
-                    .map(ContestMapper::toDTO)
+                    .collect(Collectors.toList());
+
+            // For each contest, retrieve the questions and map them to DTO, including enrolled students
+            return contests.stream()
+                    .map(contest -> {
+                        // Map Questions to QuestionDTO
+                        List<QuestionDTO> questionDTOs = contest.getQuestions().stream()
+                                .map(question -> new QuestionDTO(question.getId(), question.getTitle()))
+                                .collect(Collectors.toList());
+
+                        // Map Students to StudentDTO
+                        List<StudentDTO> studentDTOs = contest.getEnrolledStudents().stream()
+                                .map(enrolledStudent -> new StudentDTO(enrolledStudent.getId(), enrolledStudent.getName(), enrolledStudent.getEmail()))
+                                .collect(Collectors.toList());
+
+                        // Create ContestDTO and set values
+                        ContestDTO contestDTO = ContestMapper.toDTO(contest);
+                        contestDTO.setQuestions(questionDTOs);  // Add questions to DTO
+                        contestDTO.setEnrolledStudents(studentDTOs);  // Add enrolled students to DTO
+                        return contestDTO;
+                    })
                     .collect(Collectors.toList());
         } else {
-            return contestRepository.findAll().stream()
-                    .map(ContestMapper::toDTO)
-                    .collect(Collectors.toList());
+            throw new SecurityException("User is not a student");
+        }
+    } else {
+        throw new SecurityException("Principal is not of type User");
+    }
+}
+
+
+
+
+
+
+
+
+    @Override
+
+    public List<ContestDTO> getAllContests() {
+        // Retrieve the principal of the currently logged-in user
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof User) {
+            User loggedInUser = (User) principal;
+            // Find the user by email
+            User user = userRepository.findByEmail(loggedInUser.getEmail());
+            if (user == null) {
+                throw new UserNotFoundException("User not found with email: " + loggedInUser.getUsername());
+            }
+
+            // Check user role and retrieve contests accordingly
+            if (user.getRole() == Role.STUDENT) {
+                Students student = studentRepository.findById(user.getId())
+                        .orElseThrow(() -> new UserNotFoundException("Student not found with user id: " + user.getId()));
+                return contestRepository.findAll().stream()
+                        .filter(contest -> contest.getEnrolledStudents().contains(student))
+                        .map(ContestMapper::toDTO)
+                        .collect(Collectors.toList());
+            } else {
+                return contestRepository.findAll().stream()
+                        .map(ContestMapper::toDTO)
+                        .collect(Collectors.toList());
+            }
+        } else {
+            throw new SecurityException("Principal is not of type User");
         }
     }
+
+
 
     @Override
     public Optional<ContestDTO> getContestById(Long id) {
@@ -101,6 +179,9 @@ public class ContestServiceImpl implements IContestService {
 
     @Override
     public void deleteContest(Long id) {
+        if (!contestRepository.existsById(id)) {
+            throw new ContestNotFoundException("Contest not found with id: " + id);
+        }
         contestRepository.deleteById(id);
     }
 }

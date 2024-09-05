@@ -2,6 +2,7 @@ package com.Code.Compiler.Controllers;
 
 
 
+import com.Code.Compiler.DTO.StudentSolvedQuestionsDTO;
 import com.Code.Compiler.Service.Implementation.StudentServiceImpl;
 import com.Code.Compiler.models.Students;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +48,17 @@ public class StudentController {
     public ResponseEntity<Void> deleteStudent(@PathVariable("id") Long id) {
         studentService.deleteStudent(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/{studentId}/solve/{questionId}")
+    public ResponseEntity<Students> addSolvedQuestion(@PathVariable("studentId") Long studentId,
+                                                      @PathVariable("questionId") Long questionId) {
+        Students updatedStudent = studentService.addSolvedQuestion(studentId, questionId);
+        return new ResponseEntity<>(updatedStudent, HttpStatus.OK);
+    }
+    @GetMapping("/{id}/solved-questions")
+    public ResponseEntity<StudentSolvedQuestionsDTO> getStudentSolvedQuestions(@PathVariable("id") Long id) {
+        StudentSolvedQuestionsDTO studentSolvedQuestions = studentService.getStudentSolvedQuestions(id);
+        return new ResponseEntity<>(studentSolvedQuestions, HttpStatus.OK);
     }
 }

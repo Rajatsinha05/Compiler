@@ -13,15 +13,18 @@ import java.util.stream.Collectors;
 
 public class QuestionsMapper {
 
+    // Convert Questions entity to QuestionsDTO
     public static QuestionsDTO toDTO(Questions question) {
         Long userId = question.getUser() != null ? question.getUser().getId() : null;
-        List<ExamplesDTO> examples = question.getExamples() != null ? question.getExamples().stream().map(ExamplesMapper::toDTO).collect(Collectors.toList()) : null;
+        List<ExamplesDTO> examples = question.getExamples() != null ?
+                question.getExamples().stream().map(ExamplesMapper::toDTO).collect(Collectors.toList()) : null;
+
         return new QuestionsDTO(
                 question.getId(),
                 question.getTitle(),
                 question.getDescription(),
                 question.getTags(),
-                question.getDifficultLevel().name(),
+                question.getDifficultLevel() != null ? question.getDifficultLevel().name() : null,
                 question.getConstraintValue(),
                 question.getInput(),
                 question.getExpectedOutput(),
@@ -30,23 +33,38 @@ public class QuestionsMapper {
         );
     }
 
+    // Convert QuestionsDTO to Questions entity
     public static Questions toEntity(QuestionsDTO questionDTO, User user, UserRepository userRepository) {
         Questions question = new Questions();
         question.setId(questionDTO.getId());
         question.setTitle(questionDTO.getTitle());
         question.setDescription(questionDTO.getDescription());
         question.setTags(questionDTO.getTags());
-        question.setDifficultLevel(DifficultLevel.valueOf(questionDTO.getDifficultLevel()));
+
+        // Handling DifficultLevel with null check
+        question.setDifficultLevel(questionDTO.getDifficultLevel() != null ?
+                DifficultLevel.valueOf(questionDTO.getDifficultLevel()) : null);
+
         question.setConstraintValue(questionDTO.getConstraintValue());
         question.setInput(questionDTO.getInput());
         question.setExpectedOutput(questionDTO.getExpectedOutput());
-        question.setUser(user);
+
+        // If user is passed, set it, otherwise look it up via repository
+        if (user != null) {
+            question.setUser(user);
+        } else if (questionDTO.getUserId() != null) {
+            question.setUser(userRepository.findById(questionDTO.getUserId())
+                    .orElseThrow(() -> new RuntimeException("User not found with ID: " + questionDTO.getUserId())));
+        }
+
+        // Handle examples conversion
         if (questionDTO.getExamples() != null) {
             List<Examples> examples = questionDTO.getExamples().stream()
                     .map(examplesDTO -> ExamplesMapper.toEntity(examplesDTO, userRepository))
                     .collect(Collectors.toList());
             question.setExamples(examples);
         }
+
         return question;
     }
 }

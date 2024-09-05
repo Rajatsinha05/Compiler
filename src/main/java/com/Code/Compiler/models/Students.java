@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "id")
-
+@ToString
 public class Students implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,16 +35,16 @@ public class Students implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.STUDENT;
-
+    @ToString.Exclude
     @ManyToMany(mappedBy = "students", fetch = FetchType.LAZY)
     private List<User> users;
-
+    @ToString.Exclude
     @ManyToMany(mappedBy = "enrolledStudents" , fetch = FetchType.LAZY)
     private List<Contest> enrolledContests;
-
+    @ToString.Exclude
     @ManyToMany(mappedBy = "enrolledStudents" , fetch = FetchType.LAZY)
     private List<Contest> attemptedContests;
-
+    @ToString.Exclude
     @ManyToMany(  fetch = FetchType.LAZY)
     @JoinTable(
             name = "student_solved_questions",
@@ -84,16 +85,19 @@ public class Students implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-    @Override
-    public String toString() {
-        return "Students{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", grid='" + grid + '\'' +
-                ", course='" + course + '\'' +
-                ", branchCode='" + branchCode + '\'' +
-                ", role=" + role +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Students{" +
+//                "id=" + id +
+//                ", name='" + name + '\'' +
+//                ", email='" + email + '\'' +
+//                ", grid='" + grid + '\'' +
+//                ", course='" + course + '\'' +
+//                ", branchCode='" + branchCode + '\'' +
+//                ", role=" + role +
+//                '}';
+//    }
+//
+
+
 }
