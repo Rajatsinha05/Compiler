@@ -1,7 +1,7 @@
 package com.Code.Compiler.Mapper;
 
 import com.Code.Compiler.DTO.ContestDTO;
-import com.Code.Compiler.DTO.QuestionsDTO;
+import com.Code.Compiler.DTO.QuestionDTO;
 import com.Code.Compiler.DTO.StudentDTO;
 import com.Code.Compiler.models.Contest;
 import com.Code.Compiler.models.Questions;
@@ -26,11 +26,13 @@ public class ContestMapper {
             return null;
         }
 
-        // Map question IDs and QuestionsDTOs using Optional for null-safe handling
+        // Map question IDs and QuestionDTOs (containing only id and title)
         List<Long> questionIds = Optional.ofNullable(contest.getQuestions())
                 .orElse(Collections.emptyList()).stream().map(Questions::getId).collect(Collectors.toList());
-        List<QuestionsDTO> questions = Optional.ofNullable(contest.getQuestions())
-                .orElse(Collections.emptyList()).stream().map(QuestionsMapper::toDTO).collect(Collectors.toList());
+        List<QuestionDTO> questions = Optional.ofNullable(contest.getQuestions())
+                .orElse(Collections.emptyList()).stream()
+                .map(question -> new QuestionDTO(question.getId(), question.getTitle())) // Map only id and title
+                .collect(Collectors.toList());
 
         // Map enrolled student IDs and StudentDTOs using Optional
         List<Long> enrolledStudentIds = Optional.ofNullable(contest.getEnrolledStudents())
@@ -40,21 +42,20 @@ public class ContestMapper {
 
         log.info("Mapped Contest entity with ID: {} to ContestDTO", contest.getId());
 
-//        return new ContestDTO(
-//                contest.getId(),
-//                contest.getTitle(),
-//                contest.getDescription(),
-//                contest.getStartTime(),
-//                contest.getEndTime(),
-//                contest.getTotalMarks(),
-//                contest.getDifficultyLevel(),
-//                contest.getCreatedBy() != null ? contest.getCreatedBy().getId() : null,
-//                questionIds,
-//                questions,
-//                enrolledStudentIds,
-//                enrolledStudents
-//        );
-        return null;
+        return new ContestDTO(
+                contest.getId(),
+                contest.getTitle(),
+                contest.getDescription(),
+                contest.getStartTime(),
+                contest.getEndTime(),
+                contest.getTotalMarks(),
+                contest.getDifficultyLevel(),
+                contest.getCreatedBy() != null ? contest.getCreatedBy().getId() : null,
+                questionIds,
+                questions,  // Return only id and title of questions
+                enrolledStudentIds,
+                enrolledStudents
+        );
     }
 
     // Convert ContestDTO to Contest entity
