@@ -42,56 +42,56 @@ public class ContestServiceImpl implements IContestService {
 
 //    login students
 
-public List<ContestDTO> getAllContestsForLoggedInStudent() {
-    // Retrieve the principal of the currently logged-in user (token-based authentication)
-    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    // Improved method to fetch all contests for the logged-in student
+    public List<ContestDTO> getAllContestsForLoggedInStudent() {
+        // Retrieve the currently authenticated user
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-    if (principal instanceof User) {
-        User loggedInUser = (User) principal;
-        // Find the user by email
-        User user = userRepository.findByEmail(loggedInUser.getEmail());
-        if (user == null) {
-            throw new UserNotFoundException("User not found with email: " + loggedInUser.getUsername());
-        }
+        if (principal instanceof org.springframework.security.core.userdetails.User) {
+            String username = ((org.springframework.security.core.userdetails.User) principal).getUsername();
 
-        // Check if the user has the role of STUDENT
-        if (user.getRole() == Role.STUDENT) {
-            // Find the associated student by user ID
-            Students student = studentRepository.findById(user.getId())
-                    .orElseThrow(() -> new UserNotFoundException("Student not found with user id: " + user.getId()));
+            // Find the user by email (username)
+            User user = userRepository.findByEmail(username);
+            if (user == null) {
+                throw new UserNotFoundException("User not found with email: " + username);
+            }
 
-            // Retrieve all contests where the student is enrolled
-            List<Contest> contests = contestRepository.findAll().stream()
-                    .filter(contest -> contest.getEnrolledStudents().contains(student))
-                    .collect(Collectors.toList());
+            // Check if the user is a student
+            if (user.getRole() == Role.STUDENT) {
+                // Find the associated student entity
+                Students student = studentRepository.findById(user.getId())
+                        .orElseThrow(() -> new UserNotFoundException("Student not found with user id: " + user.getId()));
 
-            // For each contest, retrieve the questions and map them to DTO, including enrolled students
-            return contests.stream()
-                    .map(contest -> {
-                        // Map Questions to QuestionDTO
-                        List<QuestionDTO> questionDTOs = contest.getQuestions().stream()
-                                .map(question -> new QuestionDTO(question.getId(), question.getTitle()))
-                                .collect(Collectors.toList());
+                // Retrieve contests where the student is enrolled
+                List<Contest> enrolledContests = contestRepository.findAll().stream()
+                        .filter(contest -> contest.getEnrolledStudents().contains(student))
+                        .collect(Collectors.toList());
 
-                        // Map Students to StudentDTO
-                        List<StudentDTO> studentDTOs = contest.getEnrolledStudents().stream()
-                                .map(enrolledStudent -> new StudentDTO(enrolledStudent.getId(), enrolledStudent.getName(), enrolledStudent.getEmail()))
-                                .collect(Collectors.toList());
+                // Map the contests to DTOs
+                return enrolledContests.stream()
+                        .map(contest -> {
+                            List<QuestionDTO> questionDTOs = contest.getQuestions().stream()
+                                    .map(question -> new QuestionDTO(question.getId(), question.getTitle()))
+                                    .collect(Collectors.toList());
 
-                        // Create ContestDTO and set values
-                        ContestDTO contestDTO = ContestMapper.toDTO(contest);
-                        contestDTO.setQuestions(questionDTOs);  // Add questions to DTO
-                        contestDTO.setEnrolledStudents(studentDTOs);  // Add enrolled students to DTO
-                        return contestDTO;
-                    })
-                    .collect(Collectors.toList());
+                            List<StudentDTO> studentDTOs = contest.getEnrolledStudents().stream()
+                                    .map(enrolledStudent -> new StudentDTO(enrolledStudent.getId(), enrolledStudent.getName(), enrolledStudent.getEmail()))
+                                    .collect(Collectors.toList());
+
+                            ContestDTO contestDTO = ContestMapper.toDTO(contest);
+                            contestDTO.setQuestions(questionDTOs);  // Add question details
+                            contestDTO.setEnrolledStudents(studentDTOs);  // Add enrolled student details
+                            return contestDTO;
+                        })
+                        .collect(Collectors.toList());
+            } else {
+                throw new SecurityException("User is not a student");
+            }
         } else {
-            throw new SecurityException("User is not a student");
+            throw new SecurityException("Principal is not of type User");
         }
-    } else {
-        throw new SecurityException("Principal is not of type User");
     }
-}
+
 
 
 
@@ -107,8 +107,8 @@ public List<ContestDTO> getAllContestsForLoggedInStudent() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof User) {
+            // Handle User type principal
             User loggedInUser = (User) principal;
-            // Find the user by email
             User user = userRepository.findByEmail(loggedInUser.getEmail());
             if (user == null) {
                 throw new UserNotFoundException("User not found with email: " + loggedInUser.getUsername());
@@ -116,6 +116,7 @@ public List<ContestDTO> getAllContestsForLoggedInStudent() {
 
             // Check user role and retrieve contests accordingly
             if (user.getRole() == Role.STUDENT) {
+                // Handle the case where the User is also a Student
                 Students student = studentRepository.findById(user.getId())
                         .orElseThrow(() -> new UserNotFoundException("Student not found with user id: " + user.getId()));
                 return contestRepository.findAll().stream()
@@ -123,14 +124,26 @@ public List<ContestDTO> getAllContestsForLoggedInStudent() {
                         .map(ContestMapper::toDTO)
                         .collect(Collectors.toList());
             } else {
+                // For non-students, return all contests
                 return contestRepository.findAll().stream()
                         .map(ContestMapper::toDTO)
                         .collect(Collectors.toList());
             }
+
+        } else if (principal instanceof Students) {
+            // Handle Student type principal
+            Students student = (Students) principal;
+            return contestRepository.findAll().stream()
+                    .filter(contest -> contest.getEnrolledStudents().contains(student))
+                    .map(ContestMapper::toDTO)
+                    .collect(Collectors.toList());
+
         } else {
-            throw new SecurityException("Principal is not of type User");
+            // Handle unexpected principal types
+            throw new SecurityException("Principal is not of type User or Student");
         }
     }
+
 
 
 
