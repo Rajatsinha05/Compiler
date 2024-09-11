@@ -107,8 +107,8 @@ public class ContestServiceImpl implements IContestService {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof User) {
+            // Handle User type principal
             User loggedInUser = (User) principal;
-            // Find the user by email
             User user = userRepository.findByEmail(loggedInUser.getEmail());
             if (user == null) {
                 throw new UserNotFoundException("User not found with email: " + loggedInUser.getUsername());
@@ -116,6 +116,7 @@ public class ContestServiceImpl implements IContestService {
 
             // Check user role and retrieve contests accordingly
             if (user.getRole() == Role.STUDENT) {
+                // Handle the case where the User is also a Student
                 Students student = studentRepository.findById(user.getId())
                         .orElseThrow(() -> new UserNotFoundException("Student not found with user id: " + user.getId()));
                 return contestRepository.findAll().stream()
@@ -123,14 +124,26 @@ public class ContestServiceImpl implements IContestService {
                         .map(ContestMapper::toDTO)
                         .collect(Collectors.toList());
             } else {
+                // For non-students, return all contests
                 return contestRepository.findAll().stream()
                         .map(ContestMapper::toDTO)
                         .collect(Collectors.toList());
             }
+
+        } else if (principal instanceof Students) {
+            // Handle Student type principal
+            Students student = (Students) principal;
+            return contestRepository.findAll().stream()
+                    .filter(contest -> contest.getEnrolledStudents().contains(student))
+                    .map(ContestMapper::toDTO)
+                    .collect(Collectors.toList());
+
         } else {
-            throw new SecurityException("Principal is not of type User");
+            // Handle unexpected principal types
+            throw new SecurityException("Principal is not of type User or Student");
         }
     }
+
 
 
 

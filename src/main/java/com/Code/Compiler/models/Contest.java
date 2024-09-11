@@ -19,6 +19,8 @@ public class Contest {
     private Long id;
 
     private String title;
+    @Lob  // Use @Lob to handle large data
+    @Column(columnDefinition = "TEXT")  // Ensures the column is of type TEXT
     private String description;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
