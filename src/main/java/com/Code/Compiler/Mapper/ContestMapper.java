@@ -1,12 +1,10 @@
 package com.Code.Compiler.Mapper;
 
 import com.Code.Compiler.DTO.ContestDTO;
+import com.Code.Compiler.DTO.ContestQuestionDTO;
 import com.Code.Compiler.DTO.QuestionDTO;
 import com.Code.Compiler.DTO.StudentDTO;
-import com.Code.Compiler.models.Contest;
-import com.Code.Compiler.models.Questions;
-import com.Code.Compiler.models.Students;
-import com.Code.Compiler.models.User;
+import com.Code.Compiler.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,36 +24,43 @@ public class ContestMapper {
             return null;
         }
 
-        // Map question IDs and QuestionDTOs (containing only id and title)
-        List<Long> questionIds = Optional.ofNullable(contest.getQuestions())
-                .orElse(Collections.emptyList()).stream().map(Questions::getId).collect(Collectors.toList());
-        List<QuestionDTO> questions = Optional.ofNullable(contest.getQuestions())
-                .orElse(Collections.emptyList()).stream()
-                .map(question -> new QuestionDTO(question.getId(), question.getTitle())) // Map only id and title
-                .collect(Collectors.toList());
+        ContestDTO dto = new ContestDTO();
+        dto.setId(contest.getId());
+        dto.setTitle(contest.getTitle());
+        dto.setDescription(contest.getDescription());
+        dto.setStartTime(contest.getStartTime());
+        dto.setEndTime(contest.getEndTime());
+        dto.setTotalMarks(contest.getTotalMarks());
+        dto.setDifficultyLevel(contest.getDifficultyLevel());
 
-        // Map enrolled student IDs and StudentDTOs using Optional
-        List<Long> enrolledStudentIds = Optional.ofNullable(contest.getEnrolledStudents())
-                .orElse(Collections.emptyList()).stream().map(Students::getId).collect(Collectors.toList());
-        List<StudentDTO> enrolledStudents = Optional.ofNullable(contest.getEnrolledStudents())
-                .orElse(Collections.emptyList()).stream().map(ContestMapper::studentToDTO).collect(Collectors.toList());
+        // Safely map createdBy
+        if (contest.getCreatedBy() != null) {
+            dto.setCreatedById(contest.getCreatedBy().getId());
+        } else {
+            log.warn("Contest with ID: {} has no creator assigned", contest.getId());
+        }
+
+        // Map contest questions
+        if (contest.getContestQuestions() != null) {
+            dto.setQuestions(contest.getContestQuestions().stream()
+                    .map(q -> new QuestionDTO(q.getQuestion().getId(), q.getQuestion().getTitle()))
+                    .collect(Collectors.toList()));
+        } else {
+            dto.setQuestions(Collections.emptyList());
+        }
+
+        // Map enrolled students
+        if (contest.getEnrolledStudents() != null) {
+            dto.setEnrolledStudents(contest.getEnrolledStudents().stream()
+                    .map(ContestMapper::studentToDTO)
+                    .collect(Collectors.toList()));
+        } else {
+            dto.setEnrolledStudents(Collections.emptyList());
+        }
 
         log.info("Mapped Contest entity with ID: {} to ContestDTO", contest.getId());
 
-        return new ContestDTO(
-                contest.getId(),
-                contest.getTitle(),
-                contest.getDescription(),
-                contest.getStartTime(),
-                contest.getEndTime(),
-                contest.getTotalMarks(),
-                contest.getDifficultyLevel(),
-                contest.getCreatedBy() != null ? contest.getCreatedBy().getId() : null,
-                questionIds,
-                questions,  // Return only id and title of questions
-                enrolledStudentIds,
-                enrolledStudents
-        );
+        return dto;
     }
 
     // Convert ContestDTO to Contest entity
@@ -74,8 +79,7 @@ public class ContestMapper {
         contest.setTotalMarks(contestDTO.getTotalMarks());
 
         // Set the difficulty level (null-safe)
-        contest.setDifficultyLevel(contestDTO.getDifficultyLevel() != null ?
-                contestDTO.getDifficultyLevel() : null);
+        contest.setDifficultyLevel(contestDTO.getDifficultyLevel());
 
         // Set the created by user (null-safe)
         if (user != null) {
@@ -84,14 +88,24 @@ public class ContestMapper {
             log.warn("User is null while mapping ContestDTO to Contest entity");
         }
 
-        // Set questions and enrolled students
-        contest.setQuestions(questions != null ? questions : Collections.emptyList());
+        // Convert List<Questions> to List<ContestQuestion>
+        if (questions != null) {
+            List<ContestQuestion> contestQuestions = questions.stream()
+                    .map(question -> new ContestQuestion(null, contest, question, 0)) // Assuming marks are 0 by default, you can modify this as needed
+                    .collect(Collectors.toList());
+            contest.setContestQuestions(contestQuestions);
+        } else {
+            contest.setContestQuestions(Collections.emptyList());
+        }
+
+        // Set enrolled students
         contest.setEnrolledStudents(students != null ? students : Collections.emptyList());
 
         log.info("Mapped ContestDTO with ID: {} to Contest entity", contestDTO.getId());
 
         return contest;
     }
+
 
     // Helper method to convert Students entity to StudentDTO
     public static StudentDTO studentToDTO(Students student) {
@@ -103,7 +117,10 @@ public class ContestMapper {
         return new StudentDTO(
                 student.getId(),
                 student.getName(),
-                student.getEmail()
+                student.getEmail(),
+                student.getGrid(),
+                student.getCourse(),
+                student.getBranchCode()
         );
     }
 }

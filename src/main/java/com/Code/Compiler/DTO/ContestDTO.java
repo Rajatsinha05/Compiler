@@ -20,8 +20,11 @@ public class ContestDTO {
     private int totalMarks;
     private DifficultLevel difficultyLevel;
     private Long createdById;
-    private List<Long> questionIds;  // Optional: if you want only question IDs
-    private List<QuestionDTO> questions;  // For returning question details
-    private List<Long> enrolledStudentIds;  // Optional: if you want only student IDs
-    private List<StudentDTO> enrolledStudents;  // For returning student details
+    private List<Long> questionIds;
+    private List<QuestionDTO> questions;
+    private List<ContestQuestionDTO> contestQuestions;
+    private List<Long> enrolledStudentIds;
+    private List<StudentDTO> enrolledStudents;
+
+
 }
