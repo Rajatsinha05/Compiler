@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -117,25 +118,41 @@ public class ContestServiceImpl implements IContestService {
 
     @Override
     public ContestDTO createContest(ContestDTO contestDTO) {
+        // Find the user by ID
         User user = userRepository.findById(contestDTO.getCreatedById())
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + contestDTO.getCreatedById()));
 
-        // Create Contest entity
+        // Create Contest entity from DTO
         Contest contest = ContestMapper.toEntity(contestDTO, user, null, null);
+
+        // Save the contest first to generate an ID
         Contest savedContest = contestRepository.save(contest);
 
-        // Create and save ContestQuestion entities
-        List<ContestQuestion> contestQuestions = contestDTO.getContestQuestions().stream()
-                .map(contestQuestionDTO -> {
-                    Questions question = questionsRepository.findById(contestQuestionDTO.getQuestionId())
-                            .orElseThrow(() -> new RuntimeException("Question not found with id: " + contestQuestionDTO.getQuestionId()));
-                    return new ContestQuestion(null, savedContest, question, contestQuestionDTO.getMarks());
-                })
-                .collect(Collectors.toList());
+        // Initialize contestQuestions to an empty list
+        List<ContestQuestion> contestQuestions = Collections.emptyList();
+
+        // Check if contestDTO.getContestQuestions() is not null before streaming
+        if (contestDTO.getContestQuestions() != null) {
+            contestQuestions = contestDTO.getContestQuestions().stream()
+                    .map(contestQuestionDTO -> {
+                        Questions question = questionsRepository.findById(contestQuestionDTO.getQuestionId())
+                                .orElseThrow(() -> new RuntimeException("Question not found with id: " + contestQuestionDTO.getQuestionId()));
+                        // Create a new ContestQuestion linking the contest and the question
+                        return new ContestQuestion(null, savedContest, question, contestQuestionDTO.getMarks());
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        // Save all contest questions to the repository
         contestQuestionRepository.saveAll(contestQuestions);
 
+        // Associate saved questions with the contest
+        savedContest.setContestQuestions(contestQuestions);
+
+        // Return the complete DTO
         return ContestMapper.toDTO(savedContest);
     }
+
 
     @Override
     public ContestDTO updateContestDetails(Long id, ContestDTO contestDTO) {

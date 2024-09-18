@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -22,9 +23,10 @@ public class ContestDTO {
     private Long createdById;
     private List<Long> questionIds;
     private List<QuestionDTO> questions;
-    private List<ContestQuestionDTO> contestQuestions;
+    private List<ContestQuestionDTO> contestQuestions = Collections.emptyList();
+    // Initialize enrolledStudents to avoid null reference
+    private List<StudentDTO> enrolledStudents = Collections.emptyList();
     private List<Long> enrolledStudentIds;
-    private List<StudentDTO> enrolledStudents;
 
 
 }
