@@ -9,5 +9,7 @@ public interface IContestService {
     Optional<ContestDTO> getContestById(Long id);
     ContestDTO createContest(ContestDTO contestDTO);
     ContestDTO updateContestDetails(Long id, ContestDTO contestDTO);
+    List<ContestDTO> getAllContestsByStudentId(Long studentId);
+
     void deleteContest(Long id);
 }

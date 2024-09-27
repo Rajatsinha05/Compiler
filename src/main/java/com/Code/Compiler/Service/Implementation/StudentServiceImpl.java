@@ -4,8 +4,10 @@ package com.Code.Compiler.Service.Implementation;
 
 import com.Code.Compiler.DTO.QuestionDTO;
 import com.Code.Compiler.DTO.StudentSolvedQuestionsDTO;
+import com.Code.Compiler.DTO.StudentsDTO;
 import com.Code.Compiler.Exceptions.QuestionNotFoundException;
 import com.Code.Compiler.Exceptions.StudentNotFoundException;
+import com.Code.Compiler.Mapper.StudentsMapper;
 import com.Code.Compiler.Repository.QuestionsRepository;
 import com.Code.Compiler.Repository.StudentRepository;
 import com.Code.Compiler.Repository.UserRepository;
@@ -45,8 +47,14 @@ public class StudentServiceImpl implements IStudentService {
     }
 
 
-    public List<Students> getAllStudents() {
-        return studentRepository.findAll();
+    @Autowired
+    private StudentsMapper studentsMapper;
+
+    public List<StudentsDTO> getAllStudents() {
+        return studentRepository.findAll()
+                .stream()
+                .map(studentsMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     public Optional<Students> getStudentById(Long id) {

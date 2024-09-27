@@ -3,6 +3,8 @@ package com.Code.Compiler.Service.Implementation;
 import com.Code.Compiler.DTO.ContestDTO;
 import com.Code.Compiler.DTO.QuestionDTO;
 import com.Code.Compiler.DTO.StudentDTO;
+
+// import com.Code.Compiler.DTO.StudentsDTO;
 import com.Code.Compiler.Enum.Role;
 import com.Code.Compiler.Exceptions.ContestNotFoundException;
 import com.Code.Compiler.Exceptions.UserNotFoundException;
@@ -189,6 +191,53 @@ public class ContestServiceImpl implements IContestService {
         Contest updatedContest = contestRepository.save(existingContest);
         return ContestMapper.toDTO(updatedContest);
     }
+
+    @Override
+
+    public List<ContestDTO> getAllContestsByStudentId(Long studentId) {
+        // Fetch the student by studentId
+        Students student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new UserNotFoundException("Student not found with id: " + studentId));
+
+        // Retrieve contests where the student is enrolled
+        List<Contest> enrolledContests = contestRepository.findAll().stream()
+                .filter(contest -> contest.getEnrolledStudents().contains(student))
+                .collect(Collectors.toList());
+
+        // Map the contests to ContestDTO
+        return enrolledContests.stream()
+                .map(contest -> {
+                    // Map questions to QuestionDTO
+                    List<QuestionDTO> questionDTOs = contest.getQuestions().stream()
+                            .map(question -> new QuestionDTO(question.getId(), question.getTitle()))
+                            .collect(Collectors.toList());
+
+                    // Map students to StudentDTO (if needed)
+                    List<StudentDTO> studentDTOs = contest.getEnrolledStudents().stream()
+                            .map(enrolledStudent -> new StudentDTO(
+                                    enrolledStudent.getId(),
+                                    enrolledStudent.getName(),
+                                    enrolledStudent.getEmail()))
+                            .collect(Collectors.toList());
+
+                    // Map contest to ContestDTO
+                    ContestDTO contestDTO = ContestMapper.toDTO(contest);
+                    contestDTO.setQuestions(questionDTOs);  // Add question details
+                    contestDTO.setEnrolledStudents(studentDTOs);  // Add enrolled student details
+
+                    return contestDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
+
+
+    // Method to fetch all contests associated with a specific student by studentId
+
+
+
+
+
 
     @Override
     public void deleteContest(Long id) {

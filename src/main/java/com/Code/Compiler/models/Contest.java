@@ -52,6 +52,9 @@ public class Contest {
     @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ContestResult> contestResults;
 
+    @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ContestQuestion> contestQuestions;
+
     public int getStudentScore(Students student) {
         for (ContestResult result : contestResults) {
             if (result.getStudent().equals(student)) {

@@ -3,6 +3,7 @@ package com.Code.Compiler.Controllers;
 
 
 import com.Code.Compiler.DTO.StudentSolvedQuestionsDTO;
+import com.Code.Compiler.DTO.StudentsDTO;
 import com.Code.Compiler.Service.Implementation.StudentServiceImpl;
 import com.Code.Compiler.models.Students;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ public class StudentController {
     private StudentServiceImpl studentService;
 
     @GetMapping
-    public ResponseEntity<List<Students>> getAllStudents() {
-        List<Students> students = studentService.getAllStudents();
+    public ResponseEntity<List<StudentsDTO>> getAllStudents() {
+        List<StudentsDTO> students = studentService.getAllStudents();
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
 

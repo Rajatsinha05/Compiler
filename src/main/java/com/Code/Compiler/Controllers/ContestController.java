@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,11 @@ public class ContestController {
     public List<ContestDTO> getAllContests() {
         return contestService.getAllContests();
     }
-
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<List<ContestDTO>> getContestsByStudentId(@PathVariable Long studentId) {
+        List<ContestDTO> contestList = contestService.getAllContestsByStudentId(studentId);
+        return ResponseEntity.ok(contestList);  // Return a 200 OK response with the list of contests
+    }
     @GetMapping("/{id}")
     public ContestDTO getContestById(@PathVariable Long id) {
         log.info("Fetching contest with id: {}", id);
