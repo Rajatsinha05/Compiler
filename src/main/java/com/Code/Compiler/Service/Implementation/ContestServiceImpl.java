@@ -16,6 +16,7 @@ import com.Code.Compiler.models.Contest;
 import com.Code.Compiler.models.Questions;
 import com.Code.Compiler.models.Students;
 import com.Code.Compiler.models.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ContestServiceImpl implements IContestService {
 
     @Autowired
@@ -197,4 +199,56 @@ public class ContestServiceImpl implements IContestService {
         }
         contestRepository.deleteById(id);
     }
+
+
+
+
+
+//    creating contest
+public Contest creatingContest(Contest contest) {
+    // Additional validation or any other business logic can be performed here
+
+    // Save the contest to the repository
+    return contestRepository.save(contest);
+}
+
+
+
+
+    public List<ContestDTO> getAllContestsByStudentId(Long studentId) {
+        // Fetch the student by studentId
+        Students student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new UserNotFoundException("Student not found with id: " + studentId));
+
+        // Retrieve contests where the student is enrolled
+        List<Contest> enrolledContests = contestRepository.findAll().stream()
+                .filter(contest -> contest.getEnrolledStudents().contains(student))
+                .collect(Collectors.toList());
+
+        // Map the contests to ContestDTO
+        return enrolledContests.stream()
+                .map(contest -> {
+                    // Map questions to QuestionDTO
+                    List<QuestionDTO> questionDTOs = contest.getQuestions().stream()
+                            .map(question -> new QuestionDTO(question.getId(), question.getTitle()))
+                            .collect(Collectors.toList());
+
+                    // Map students to StudentDTO (if needed)
+                    List<StudentDTO> studentDTOs = contest.getEnrolledStudents().stream()
+                            .map(enrolledStudent -> new StudentDTO(
+                                    enrolledStudent.getId(),
+                                    enrolledStudent.getName(),
+                                    enrolledStudent.getEmail()))
+                            .collect(Collectors.toList());
+
+                    // Map contest to ContestDTO
+                    ContestDTO contestDTO = ContestMapper.toDTO(contest);
+                    contestDTO.setQuestions(questionDTOs);  // Add question details
+                    contestDTO.setEnrolledStudents(studentDTOs);  // Add enrolled student details
+
+                    return contestDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
 }
