@@ -25,4 +25,7 @@ public class ContestQuestion  {
     @JoinColumn(name = "contest_id")
     @JsonBackReference
     private Contest contest;
+
+    public ContestQuestion(Long contestQuestionId) {
+    }
 }
