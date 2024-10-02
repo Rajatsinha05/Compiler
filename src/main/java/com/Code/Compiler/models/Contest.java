@@ -20,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Contest {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,7 +33,7 @@ public class Contest {
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private int totalMarks;
+    private int totalMarks = 0;
 
     @Enumerated(EnumType.STRING)
     private DifficultLevel difficultyLevel;
@@ -55,21 +56,22 @@ public class Contest {
             joinColumns = @JoinColumn(name = "contest_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
-    @JsonIgnore // Prevents serialization to avoid infinite recursion
+    @JsonIgnore // Prevents serialization to avoid potential recursion
     private List<Students> enrolledStudents;
 
     @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore // Prevents serialization to avoid infinite recursion
     private List<ContestResult> contestResults;
 
     @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore // Prevents serialization to avoid infinite recursion
     private List<ContestQuestion> contestQuestions;
 
+    // Helper method to get a student's score from contestResults
     public int getStudentScore(Students student) {
-        for (ContestResult result : contestResults) {
-            if (result.getStudent().equals(student)) {
-                return result.getScore();
+        if (contestResults != null) {
+            for (ContestResult result : contestResults) {
+                if (result.getStudent().equals(student)) {
+                    return result.getTotalScore(); // Corrected to use `getTotalScore()`
+                }
             }
         }
         return 0;

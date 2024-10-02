@@ -206,9 +206,7 @@ public class ContestServiceImpl implements IContestService {
 
 //    creating contest
 public Contest creatingContest(Contest contest) {
-    // Additional validation or any other business logic can be performed here
 
-    // Save the contest to the repository
     return contestRepository.save(contest);
 }
 
