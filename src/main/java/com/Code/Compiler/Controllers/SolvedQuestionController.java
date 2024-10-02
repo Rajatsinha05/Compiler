@@ -2,7 +2,9 @@ package com.Code.Compiler.Controllers;
 
 import com.Code.Compiler.DTO.SolvedQuestionInContestDTO;
 import com.Code.Compiler.Service.Implementation.SolvedQuestionService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,12 +19,14 @@ public class SolvedQuestionController {
 
     // Endpoint to save or update a solved question
     @PostMapping("/save")
-    public ResponseEntity<String> saveOrUpdateSolvedQuestion(@RequestBody SolvedQuestionInContestDTO solvedQuestionDTO) {
+    public ResponseEntity<String> saveOrUpdateSolvedQuestion(@Valid @RequestBody SolvedQuestionInContestDTO solvedQuestionDTO) {
         try {
             solvedQuestionService.saveOrUpdateSolvedQuestion(solvedQuestionDTO);
             return ResponseEntity.ok("Solved question saved or updated successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to save or update solved question: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to save or update solved question: " + e.getMessage());
         }
     }
 
@@ -31,9 +35,14 @@ public class SolvedQuestionController {
     public ResponseEntity<List<SolvedQuestionInContestDTO>> getAllSolvedQuestionsByContestId(@PathVariable Long contestId) {
         try {
             List<SolvedQuestionInContestDTO> solvedQuestionsDTO = solvedQuestionService.getAllSolvedQuestionsByContestId(contestId);
+            if (solvedQuestionsDTO.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
             return ResponseEntity.ok(solvedQuestionsDTO);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -43,9 +52,14 @@ public class SolvedQuestionController {
             @PathVariable Long studentId, @PathVariable Long contestId) {
         try {
             List<SolvedQuestionInContestDTO> solvedQuestionsDTO = solvedQuestionService.getAllSolvedQuestionsByStudentIdAndContestId(studentId, contestId);
+            if (solvedQuestionsDTO.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
             return ResponseEntity.ok(solvedQuestionsDTO);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -55,8 +69,12 @@ public class SolvedQuestionController {
         try {
             solvedQuestionService.deleteSolvedQuestionById(solvedQuestionId);
             return ResponseEntity.ok("Solved question deleted successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid solved question ID: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Solved question not found: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to delete solved question: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete solved question: " + e.getMessage());
         }
     }
 }

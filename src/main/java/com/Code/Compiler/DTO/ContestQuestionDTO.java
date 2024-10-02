@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class ContestQuestionDTO {
     private Long questionId;
     private int marks;
+    private String title;
 }

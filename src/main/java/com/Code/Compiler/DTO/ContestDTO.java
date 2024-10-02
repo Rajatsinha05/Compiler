@@ -19,9 +19,7 @@ public class ContestDTO {
     private LocalDateTime endTime;
     private int totalMarks;
     private DifficultLevel difficultyLevel;
-    private Long createdById;
-    private List<Long> questionIds;  // Optional: if you want only question IDs
-    private List<QuestionDTO> questions;  // For returning question details
-    private List<Long> enrolledStudentIds;  // Optional: if you want only student IDs
-    private List<StudentDTO> enrolledStudents;  // For returning student details
+    private Long createdBy;  // Modified to store just creator ID, previously createdById
+    private List<ContestQuestionDTO> contestQuestions;  // Updated to include question details like title and marks
+    private List<StudentDTO> enrolledStudents;  // To return student details, including only needed fields
 }

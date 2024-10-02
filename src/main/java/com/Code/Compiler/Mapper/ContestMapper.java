@@ -1,12 +1,9 @@
 package com.Code.Compiler.Mapper;
 
 import com.Code.Compiler.DTO.ContestDTO;
-import com.Code.Compiler.DTO.QuestionDTO;
+import com.Code.Compiler.DTO.ContestQuestionDTO;
 import com.Code.Compiler.DTO.StudentDTO;
-import com.Code.Compiler.models.Contest;
-import com.Code.Compiler.models.Questions;
-import com.Code.Compiler.models.Students;
-import com.Code.Compiler.models.User;
+import com.Code.Compiler.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,19 +23,17 @@ public class ContestMapper {
             return null;
         }
 
-        // Map question IDs and QuestionDTOs (containing only id and title)
-        List<Long> questionIds = Optional.ofNullable(contest.getQuestions())
-                .orElse(Collections.emptyList()).stream().map(Questions::getId).collect(Collectors.toList());
-        List<QuestionDTO> questions = Optional.ofNullable(contest.getQuestions())
+        // Map contest questions to ContestQuestionDTOs
+        List<ContestQuestionDTO> contestQuestions = Optional.ofNullable(contest.getContestQuestions())
                 .orElse(Collections.emptyList()).stream()
-                .map(question -> new QuestionDTO(question.getId(), question.getTitle())) // Map only id and title
+                .map(ContestMapper::contestQuestionToDTO)
                 .collect(Collectors.toList());
 
-        // Map enrolled student IDs and StudentDTOs using Optional
-        List<Long> enrolledStudentIds = Optional.ofNullable(contest.getEnrolledStudents())
-                .orElse(Collections.emptyList()).stream().map(Students::getId).collect(Collectors.toList());
+        // Map enrolled students to StudentDTOs
         List<StudentDTO> enrolledStudents = Optional.ofNullable(contest.getEnrolledStudents())
-                .orElse(Collections.emptyList()).stream().map(ContestMapper::studentToDTO).collect(Collectors.toList());
+                .orElse(Collections.emptyList()).stream()
+                .map(ContestMapper::studentToDTO)
+                .collect(Collectors.toList());
 
         log.info("Mapped Contest entity with ID: {} to ContestDTO", contest.getId());
 
@@ -51,9 +46,7 @@ public class ContestMapper {
                 contest.getTotalMarks(),
                 contest.getDifficultyLevel(),
                 contest.getCreatedBy() != null ? contest.getCreatedBy().getId() : null,
-                questionIds,
-                questions,  // Return only id and title of questions
-                enrolledStudentIds,
+                contestQuestions,
                 enrolledStudents
         );
     }
@@ -93,6 +86,21 @@ public class ContestMapper {
         return contest;
     }
 
+    // Helper method to convert ContestQuestion entity to ContestQuestionDTO
+    private static ContestQuestionDTO contestQuestionToDTO(ContestQuestion contestQuestion) {
+        if (contestQuestion == null) {
+            log.error("ContestQuestion entity is null, cannot map to ContestQuestionDTO");
+            return null;
+        }
+
+        return new ContestQuestionDTO(
+                contestQuestion.getQuestion().getId(),
+                contestQuestion.getMarks(),
+                contestQuestion.getQuestion().getTitle() // Assuming the question entity has a title field
+
+        );
+    }
+
     // Helper method to convert Students entity to StudentDTO
     public static StudentDTO studentToDTO(Students student) {
         if (student == null) {
@@ -102,8 +110,8 @@ public class ContestMapper {
 
         return new StudentDTO(
                 student.getId(),
-                student.getName(),
-                student.getEmail()
+                student.getName(),  // Can be null if not available
+                student.getEmail()  // Can be null if not available
         );
     }
 }
