@@ -91,4 +91,26 @@ public class SolvedQuestionService {
                 .orElseThrow(() -> new RuntimeException("Solved question not found with ID: " + solvedQuestionId));
         solvedQuestionInContestRepository.delete(solvedQuestion);
     }
+    @Transactional
+    public void updateObtainedMarks(SolvedQuestionInContestDTO solvedQuestionDTO) {
+        if (solvedQuestionDTO == null) {
+            throw new IllegalArgumentException("SolvedQuestionInContestDTO cannot be null");
+        }
+
+        // Check if the solved question already exists by contestId, studentId, and questionId
+        SolvedQuestionInContest existingSolvedQuestion = solvedQuestionInContestRepository
+                .findByContestIdAndStudentIdAndQuestionId(
+                        solvedQuestionDTO.getContestId(),
+                        solvedQuestionDTO.getStudentId(),
+                        solvedQuestionDTO.getQuestionId()
+                );
+
+        if (existingSolvedQuestion != null) {
+            // Update the obtained marks
+            existingSolvedQuestion.setObtainedMarks(solvedQuestionDTO.getObtainedMarks());
+            solvedQuestionInContestRepository.save(existingSolvedQuestion);
+        } else {
+            throw new RuntimeException("Solved question not found for the given contestId, studentId, and questionId.");
+        }
+    }
 }

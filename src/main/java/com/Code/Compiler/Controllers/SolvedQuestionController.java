@@ -30,6 +30,21 @@ public class SolvedQuestionController {
         }
     }
 
+    // Endpoint to update obtained marks for a solved question
+    @PutMapping("/update-marks")
+    public ResponseEntity<String> updateObtainedMarks(@Valid @RequestBody SolvedQuestionInContestDTO solvedQuestionDTO) {
+        try {
+            solvedQuestionService.updateObtainedMarks(solvedQuestionDTO);
+            return ResponseEntity.ok("Obtained marks updated successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Solved question not found: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update obtained marks: " + e.getMessage());
+        }
+    }
+
     // Endpoint to get all solved questions by contest ID
     @GetMapping("/contest/{contestId}")
     public ResponseEntity<List<SolvedQuestionInContestDTO>> getAllSolvedQuestionsByContestId(@PathVariable Long contestId) {
