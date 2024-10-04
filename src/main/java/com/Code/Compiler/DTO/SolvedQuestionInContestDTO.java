@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SolvedQuestionInContestDTO {
+    private  Long id;
     private Long questionId;
     private Long contestId;
     private Long studentId;
-    private Long contestQuestionId; // Reference to the assigned marks for the question in the contest
+    private Long contestQuestionId;
     private int obtainedMarks;
 }

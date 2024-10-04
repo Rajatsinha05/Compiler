@@ -1,10 +1,9 @@
 package com.Code.Compiler.Service.Implementation;
 
 import com.Code.Compiler.DTO.SolvedQuestionInContestDTO;
-import com.Code.Compiler.Mapper.ContestResultMapper;
-import com.Code.Compiler.Repository.SolvedQuestionInContestRepository;
-import com.Code.Compiler.models.ContestQuestion;
-import com.Code.Compiler.models.SolvedQuestionInContest;
+import com.Code.Compiler.Mapper.SolvedQuestionMapper;
+import com.Code.Compiler.Repository.*;
+import com.Code.Compiler.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +17,18 @@ public class SolvedQuestionService {
     @Autowired
     private SolvedQuestionInContestRepository solvedQuestionInContestRepository;
 
+    @Autowired
+    private QuestionsRepository questionsRepository;
+
+    @Autowired
+    private ContestRepository contestRepository;
+
+    @Autowired
+    private StudentRepository studentsRepository;
+
+    @Autowired
+    private ContestQuestionRepository contestQuestionRepository;
+
     // Save or Update a solved question
     @Transactional
     public void saveOrUpdateSolvedQuestion(SolvedQuestionInContestDTO solvedQuestionDTO) {
@@ -25,28 +36,38 @@ public class SolvedQuestionService {
             throw new IllegalArgumentException("SolvedQuestionInContestDTO cannot be null");
         }
 
-        // Check if the solved question already exists by contestId, studentId, and questionId
-        SolvedQuestionInContest existingSolvedQuestion = solvedQuestionInContestRepository
-                .findByContestIdAndStudentIdAndQuestionId(
-                        solvedQuestionDTO.getContestId(),
-                        solvedQuestionDTO.getStudentId(),
-                        solvedQuestionDTO.getQuestionId()
-                );
+        SolvedQuestionInContest solvedQuestionEntity;
 
-        if (existingSolvedQuestion != null) {
-            // Update the existing solved question
-            existingSolvedQuestion.setObtainedMarks(solvedQuestionDTO.getObtainedMarks());
+        // If the ID is present, try to update the existing entry
+        if (solvedQuestionDTO.getId() != null) {
+            solvedQuestionEntity = solvedQuestionInContestRepository.findById(solvedQuestionDTO.getId())
+                    .orElseThrow(() -> new RuntimeException("Solved question not found with ID: " + solvedQuestionDTO.getId()));
 
-            // Check if the contest question is provided in DTO
+            // Update the obtained marks
+            solvedQuestionEntity.setObtainedMarks(solvedQuestionDTO.getObtainedMarks());
+
             if (solvedQuestionDTO.getContestQuestionId() != null) {
-                existingSolvedQuestion.setContestQuestion(new ContestQuestion(solvedQuestionDTO.getContestQuestionId()));
+                ContestQuestion contestQuestion = contestQuestionRepository.findById(solvedQuestionDTO.getContestQuestionId())
+                        .orElseThrow(() -> new RuntimeException("Contest question not found with ID: " + solvedQuestionDTO.getContestQuestionId()));
+                solvedQuestionEntity.setContestQuestion(contestQuestion);
             }
-            solvedQuestionInContestRepository.save(existingSolvedQuestion);
+
         } else {
-            // If no existing record, save a new one
-            SolvedQuestionInContest newSolvedQuestion = ContestResultMapper.toSolvedQuestionInContestEntity(solvedQuestionDTO);
-            solvedQuestionInContestRepository.save(newSolvedQuestion);
+            // If no ID is provided, check if an entry exists with the given contestId, studentId, and questionId
+            Questions question = questionsRepository.findById(solvedQuestionDTO.getQuestionId())
+                    .orElseThrow(() -> new RuntimeException("Question not found with ID: " + solvedQuestionDTO.getQuestionId()));
+            Contest contest = contestRepository.findById(solvedQuestionDTO.getContestId())
+                    .orElseThrow(() -> new RuntimeException("Contest not found with ID: " + solvedQuestionDTO.getContestId()));
+            Students student = studentsRepository.findById(solvedQuestionDTO.getStudentId())
+                    .orElseThrow(() -> new RuntimeException("Student not found with ID: " + solvedQuestionDTO.getStudentId()));
+            ContestQuestion contestQuestion = contestQuestionRepository.findById(solvedQuestionDTO.getContestQuestionId())
+                    .orElse(null);
+
+            solvedQuestionEntity = SolvedQuestionMapper.toSolvedQuestionInContestEntity(solvedQuestionDTO, question, contest, student, contestQuestion);
         }
+
+        // Save the solved question entity
+        solvedQuestionInContestRepository.save(solvedQuestionEntity);
     }
 
     // Get all solved questions by contest ID
@@ -60,7 +81,7 @@ public class SolvedQuestionService {
 
         // Convert to DTOs
         return solvedQuestions.stream()
-                .map(ContestResultMapper::toSolvedQuestionInContestDTO)
+                .map(SolvedQuestionMapper::toSolvedQuestionInContestDTO)
                 .collect(Collectors.toList());
     }
 
@@ -76,7 +97,7 @@ public class SolvedQuestionService {
 
         // Convert to DTOs
         return solvedQuestions.stream()
-                .map(ContestResultMapper::toSolvedQuestionInContestDTO)
+                .map(SolvedQuestionMapper::toSolvedQuestionInContestDTO)
                 .collect(Collectors.toList());
     }
 
@@ -91,6 +112,8 @@ public class SolvedQuestionService {
                 .orElseThrow(() -> new RuntimeException("Solved question not found with ID: " + solvedQuestionId));
         solvedQuestionInContestRepository.delete(solvedQuestion);
     }
+
+    // Update obtained marks for a solved question
     @Transactional
     public void updateObtainedMarks(SolvedQuestionInContestDTO solvedQuestionDTO) {
         if (solvedQuestionDTO == null) {
