@@ -1,7 +1,7 @@
 package com.Code.Compiler.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class ContestResult {
 
     @Id
@@ -21,7 +22,6 @@ public class ContestResult {
 
     @ManyToOne
     @JoinColumn(name = "contest_id", nullable = false)
-    @JsonBackReference // Prevents recursion during serialization (parent side)
     private Contest contest;
 
     @ManyToOne
@@ -30,7 +30,6 @@ public class ContestResult {
 
     // Stores each solved question in the contest, along with its score
     @OneToMany(mappedBy = "contestResult", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference // Manages the child relationship
     private List<SolvedQuestionInContest> solvedQuestions;
 
     // Helper method to calculate the total score from solved questions

@@ -1,6 +1,7 @@
 package com.Code.Compiler.Service.Implementation;
 
 import com.Code.Compiler.DTO.LoginRequest;
+import com.Code.Compiler.DTO.User.creatingUserDTO;
 import com.Code.Compiler.DTO.UserWithToken;
 import com.Code.Compiler.Exceptions.AlreadyExists;
 import com.Code.Compiler.Exceptions.UserNotFoundException;
@@ -99,5 +100,10 @@ public class UserService implements IUserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public  User createUserByAdmin( User user) {
+        return userRepository.save(user);
+
     }
 }

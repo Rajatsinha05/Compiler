@@ -1,15 +1,14 @@
 package com.Code.Compiler.Service.Implementation;
 
-
-
+import com.Code.Compiler.DTO.Student.StudentDTO;
 import com.Code.Compiler.DTO.QuestionDTO;
 import com.Code.Compiler.DTO.StudentSolvedQuestionsDTO;
+import com.Code.Compiler.Enum.Role;
 import com.Code.Compiler.Exceptions.QuestionNotFoundException;
 import com.Code.Compiler.Exceptions.StudentNotFoundException;
+import com.Code.Compiler.Mapper.Student.StudentMapper;
 import com.Code.Compiler.Repository.QuestionsRepository;
 import com.Code.Compiler.Repository.StudentRepository;
-import com.Code.Compiler.Repository.UserRepository;
-import com.Code.Compiler.Service.Interfaces.IStudentService;
 import com.Code.Compiler.models.Questions;
 import com.Code.Compiler.models.Students;
 import jakarta.validation.ValidationException;
@@ -17,13 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -31,74 +23,76 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class StudentServiceImpl implements IStudentService {
+public class StudentServiceImpl {
 
     @Autowired
     private StudentRepository studentRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+
     @Autowired
     private QuestionsRepository questionRepository;
-    @Autowired
-    public StudentServiceImpl(UserRepository userRepository, JwtService jwtService) {
 
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    public StudentServiceImpl() {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-
-    public List<Students> getAllStudents() {
-        return studentRepository.findAll();
+    // Get all students as DTOs
+    public List<StudentDTO> getAllStudents() {
+        return studentRepository.findAll().stream()
+                .map(StudentMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Students> getStudentById(Long id) {
-        return studentRepository.findById(id);
+    // Get a student by ID as a DTO
+    public Optional<StudentDTO> getStudentById(Long id) {
+        return studentRepository.findById(id)
+                .map(StudentMapper::toDto);
     }
 
-    public Students createStudent(Students student) {
+    // Create a student from StudentDTO
+    public StudentDTO createStudent(StudentDTO studentDTO) {
+        // Check if student with the same email or grid already exists
+        if (studentRepository.existsByEmail(studentDTO.getEmail()) || studentRepository.existsByGrid(studentDTO.getGrid())) {
+            throw new ValidationException("Student with the same email or grid already exists");
+        }
+
+        Students student = StudentMapper.toEntity(studentDTO);
 
         String password = student.getPassword();
-        if (password.length() < 8) {
+        if (password == null || password.length() < 8) {
             throw new ValidationException("Password must be at least 8 characters long");
         }
         student.setPassword(passwordEncoder.encode(password));
-        return studentRepository.save(student);
+        Students savedStudent = studentRepository.save(student);
+
+        return StudentMapper.toDto(savedStudent);
     }
 
-    public Students updateStudentDetails(Long id, Students studentDetails) {
-        Optional<Students> student = studentRepository.findById(id);
-        if (student.isPresent()) {
-            Students existingStudent = student.get();
-            existingStudent.setName(studentDetails.getUsername());
-            existingStudent.setEmail(studentDetails.getEmail());
-            existingStudent.setPassword(studentDetails.getPassword());
-            existingStudent.setGrid(studentDetails.getGrid());
-            existingStudent.setCourse(studentDetails.getCourse());
-            return studentRepository.save(existingStudent);
+    // Update student details using StudentDTO
+    public StudentDTO updateStudentDetails(Long id, StudentDTO studentDTO) {
+        Optional<Students> studentOptional = studentRepository.findById(id);
+        if (studentOptional.isPresent()) {
+            Students existingStudent = studentOptional.get();
+            existingStudent.setName(studentDTO.getName());
+            existingStudent.setEmail(studentDTO.getEmail());
+            existingStudent.setGrid(studentDTO.getGrid());
+            existingStudent.setCourse(studentDTO.getCourse());
+            existingStudent.setBranchCode(studentDTO.getBranchCode());
+            if (studentDTO.getPassword() != null && studentDTO.getPassword().length() >= 8) {
+                existingStudent.setPassword(passwordEncoder.encode(studentDTO.getPassword()));
+            }
+            existingStudent.setRole(studentDTO.getRole() != null ? studentDTO.getRole() : Role.STUDENT);
+
+            Students updatedStudent = studentRepository.save(existingStudent);
+            return StudentMapper.toDto(updatedStudent);
         } else {
             throw new StudentNotFoundException("Student not found with id: " + id);
         }
     }
-    public Students addSolvedQuestion(Long studentId, Long questionId) {
-        Optional<Students> studentOptional = studentRepository.findById(studentId);
-        if (!studentOptional.isPresent()) {
-            throw new StudentNotFoundException("Student not found with id: " + studentId);
-        }
 
-        Students student = studentOptional.get();
-
-        Optional<Questions> questionOptional = questionRepository.findById(questionId);
-        if (!questionOptional.isPresent()) {
-            throw new QuestionNotFoundException("Question not found with id: " + questionId);
-        }
-
-        Questions question = questionOptional.get();
-
-        // Add the question to the student's solved questions list
-        student.getSolvedQuestions().add(question);
-
-        // Save the updated student details
-        return studentRepository.save(student);
-    }
-
+    // Get student's solved questions
     public StudentSolvedQuestionsDTO getStudentSolvedQuestions(Long studentId) {
         Optional<Students> studentOptional = studentRepository.findById(studentId);
         if (!studentOptional.isPresent()) {
@@ -114,10 +108,17 @@ public class StudentServiceImpl implements IStudentService {
 
         return new StudentSolvedQuestionsDTO(student.getName(), solvedQuestions);
     }
+
+    // Delete a student by ID
     public void deleteStudent(Long id) {
+        if (!studentRepository.existsById(id)) {
+            throw new StudentNotFoundException("Student not found with id: " + id);
+        }
         studentRepository.deleteById(id);
     }
 
-
+    // Get all students
+    public List<Students> getAll() {
+        return studentRepository.findAll();
+    }
 }
-

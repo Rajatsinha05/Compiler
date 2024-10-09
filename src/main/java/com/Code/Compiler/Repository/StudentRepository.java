@@ -7,5 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StudentRepository extends JpaRepository<Students,Long> {
     public Students findByEmail(String email);
+    boolean existsByEmail(String email);
+    boolean existsByGrid(String grid);
 
 }

@@ -1,6 +1,7 @@
 package com.Code.Compiler.Controllers;
 
 import com.Code.Compiler.DTO.SolvedQuestionInContestDTO;
+import com.Code.Compiler.DTO.StudentRankingDTO;
 import com.Code.Compiler.Service.Implementation.SolvedQuestionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -16,7 +18,10 @@ public class SolvedQuestionController {
 
     @Autowired
     private SolvedQuestionService solvedQuestionService;
-
+@GetMapping("/top-20")
+public List<StudentRankingDTO>  getSolvedQuestionsTop20() {
+    return solvedQuestionService.getTop20RankedStudentsByTotalScore();
+}
     // Endpoint to save or update a solved question
     @PostMapping("/save")
     public ResponseEntity<String> saveOrUpdateSolvedQuestion(@Valid @RequestBody SolvedQuestionInContestDTO solvedQuestionDTO) {
