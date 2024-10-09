@@ -1,7 +1,7 @@
 package com.Code.Compiler.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class SolvedQuestionInContest {
 
     @Id
@@ -23,7 +24,6 @@ public class SolvedQuestionInContest {
 
     @ManyToOne
     @JoinColumn(name = "contest_id", nullable = false)
-    @JsonBackReference // Prevents recursion when serializing contest relationship
     private Contest contest;
 
     @ManyToOne
@@ -36,7 +36,6 @@ public class SolvedQuestionInContest {
 
     @ManyToOne
     @JoinColumn(name = "contest_result_id")
-    @JsonManagedReference // Manages the relationship with ContestResult
     private ContestResult contestResult;
 
     private int obtainedMarks;

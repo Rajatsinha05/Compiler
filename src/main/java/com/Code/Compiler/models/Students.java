@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.UUIDGenerator.class, property = "id")
-@ToString
+//@ToString
 public class Students implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,7 +60,8 @@ public class Students implements UserDetails {
         var role = new SimpleGrantedAuthority("ROLE_" + this.role.name());
         return List.of(role);
     }
-
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ContestAttempting> contestAttempts;
     @Override
     public String getUsername() {
         return email;
@@ -85,19 +86,19 @@ public class Students implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-//    @Override
-//    public String toString() {
-//        return "Students{" +
-//                "id=" + id +
-//                ", name='" + name + '\'' +
-//                ", email='" + email + '\'' +
-//                ", grid='" + grid + '\'' +
-//                ", course='" + course + '\'' +
-//                ", branchCode='" + branchCode + '\'' +
-//                ", role=" + role +
-//                '}';
-//    }
-//
+    @Override
+    public String toString() {
+        return "Students{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", grid='" + grid + '\'' +
+                ", course='" + course + '\'' +
+                ", branchCode='" + branchCode + '\'' +
+                ", role=" + role +
+                '}';
+    }
+
 
 
 }

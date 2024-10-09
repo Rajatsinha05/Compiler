@@ -1,6 +1,7 @@
 package com.Code.Compiler.Service.Implementation;
 
 import com.Code.Compiler.DTO.SolvedQuestionInContestDTO;
+import com.Code.Compiler.DTO.StudentRankingDTO;
 import com.Code.Compiler.Mapper.SolvedQuestionMapper;
 import com.Code.Compiler.Repository.*;
 import com.Code.Compiler.models.*;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -136,4 +138,30 @@ public class SolvedQuestionService {
             throw new RuntimeException("Solved question not found for the given contestId, studentId, and questionId.");
         }
     }
+
+
+    public List<StudentRankingDTO> getTop20RankedStudentsByTotalScore() {
+        // Fetch all solved questions
+        List<SolvedQuestionInContest> solvedQuestions = solvedQuestionInContestRepository.findAll();
+
+        // Aggregate scores by student ID
+        Map<Long, Integer> studentScores = solvedQuestions.stream()
+                .collect(Collectors.groupingBy(
+                        solvedQuestion -> solvedQuestion.getStudent().getId(),
+                        Collectors.summingInt(SolvedQuestionInContest::getObtainedMarks)
+                ));
+
+        // Get the top 20 ranked students by their total scores
+        return studentScores.entrySet().stream()
+                .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue())) // Sort by score in descending order
+                .limit(20) // Limit to top 20 students
+                .map(entry -> {
+                    Students student = studentsRepository.findById(entry.getKey())
+                            .orElseThrow(() -> new RuntimeException("Student not found with ID: " + entry.getKey()));
+                    return new StudentRankingDTO(student.getId(), student.getName(), entry.getValue());
+                })
+                .collect(Collectors.toList());
+    }
+
+
 }

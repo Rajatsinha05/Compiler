@@ -2,7 +2,6 @@ package com.Code.Compiler.models;
 
 import com.Code.Compiler.Enum.DifficultLevel;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -56,7 +55,6 @@ public class Contest {
             joinColumns = @JoinColumn(name = "contest_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
-    @JsonIgnore // Prevents serialization to avoid potential recursion
     private List<Students> enrolledStudents;
 
     @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -65,12 +63,15 @@ public class Contest {
     @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ContestQuestion> contestQuestions;
 
+    @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ContestAttempting> contestAttempts;
+
     // Helper method to get a student's score from contestResults
     public int getStudentScore(Students student) {
         if (contestResults != null) {
             for (ContestResult result : contestResults) {
                 if (result.getStudent().equals(student)) {
-                    return result.getTotalScore(); // Corrected to use `getTotalScore()`
+                    return result.getTotalScore();
                 }
             }
         }

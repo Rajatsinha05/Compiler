@@ -20,14 +20,17 @@ import java.util.List;
 @ToString
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
     private String name;
     private String email;
     private String password;
     private String department;
-    private String batchName;
+    private String branchCode;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -48,13 +51,15 @@ public class User implements UserDetails {
     @ToString.Exclude
     private List<Students> students;
 
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Contest> contests;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.role == null) {
             throw new IllegalStateException("Role not set for user: " + this.email);
         }
-        var role = new SimpleGrantedAuthority("ROLE_" + this.role.name());
-        return List.of(role);
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
     }
 
     @Override
