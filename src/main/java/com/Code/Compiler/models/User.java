@@ -1,5 +1,6 @@
 package com.Code.Compiler.models;
 
+import com.Code.Compiler.Enum.Permission;
 import com.Code.Compiler.Enum.Role;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Setter
@@ -34,6 +36,12 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @ElementCollection(targetClass = Permission.class)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "user_permissions", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "permission")
+    private List<Permission> permissions;  // List of permissions assigned to this user
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Questions> questions;
@@ -54,12 +62,17 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Contest> contests;
 
+    // Get authorities including both role and permissions
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.role == null) {
-            throw new IllegalStateException("Role not set for user: " + this.email);
-        }
-        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+        List<SimpleGrantedAuthority> authorities = permissions.stream()
+                .map(permission -> new SimpleGrantedAuthority(permission.name()))
+                .collect(Collectors.toList());
+
+        // Add the role as an authority
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+
+        return authorities;
     }
 
     @Override

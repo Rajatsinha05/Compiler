@@ -3,6 +3,7 @@ package com.Code.Compiler.Service.Implementation;
 import com.Code.Compiler.DTO.LoginRequest;
 import com.Code.Compiler.DTO.User.creatingUserDTO;
 import com.Code.Compiler.DTO.UserWithToken;
+import com.Code.Compiler.Enum.Permission;
 import com.Code.Compiler.Exceptions.AlreadyExists;
 import com.Code.Compiler.Exceptions.UserNotFoundException;
 import com.Code.Compiler.Repository.StudentRepository;
@@ -106,4 +107,33 @@ public class UserService implements IUserService {
         return userRepository.save(user);
 
     }
+
+
+
+    // Add multiple permissions to a user
+    public User addPermissionsToUser(Long userId, List<Permission> permissions) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+
+        // Add permissions if they are not already present
+        for (Permission permission : permissions) {
+            if (!user.getPermissions().contains(permission)) {
+                user.getPermissions().add(permission);
+            }
+        }
+        return userRepository.save(user);
+    }
+
+    // Remove multiple permissions from a user
+    public User removePermissionsFromUser(Long userId, List<Permission> permissions) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+
+        // Remove permissions if they exist
+        for (Permission permission : permissions) {
+            user.getPermissions().remove(permission);
+        }
+        return userRepository.save(user);
+    }
+
 }

@@ -3,6 +3,7 @@ package com.Code.Compiler.Controllers;
 import com.Code.Compiler.DTO.LoginRequest;
 import com.Code.Compiler.DTO.UserDTO;
 import com.Code.Compiler.DTO.UserWithToken;
+import com.Code.Compiler.Enum.Permission;
 import com.Code.Compiler.Exceptions.AlreadyExists;
 import com.Code.Compiler.Service.Implementation.LoginServiceImpl;
 import com.Code.Compiler.Service.Implementation.UserService;
@@ -12,6 +13,7 @@ import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -78,4 +80,26 @@ public class UserController {
 
         return  ResponseEntity.status(HttpStatus.CREATED).body(userService.createUserByAdmin(user));
     }
+
+
+//    @PreAuthorize("hasRole('SUPERADMIN')")
+@PutMapping("/{userId}/permissions/add")
+public ResponseEntity<User> addPermissionsToUser(
+        @PathVariable Long userId,
+        @RequestBody List<Permission> permissions // Accept list of permissions
+) {
+    User updatedUser = userService.addPermissionsToUser(userId, permissions);
+    return ResponseEntity.ok(updatedUser);
+}
+
+    @PreAuthorize("hasRole('SUPERADMIN')")
+    @PutMapping("/{userId}/permissions/remove")
+    public ResponseEntity<User> removePermissionsFromUser(
+            @PathVariable Long userId,
+            @RequestBody List<Permission> permissions // Accept list of permissions
+    ) {
+        User updatedUser = userService.removePermissionsFromUser(userId, permissions);
+        return ResponseEntity.ok(updatedUser);
+    }
+
 }
