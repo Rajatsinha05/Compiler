@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -71,6 +72,7 @@ public class QuestionServiceImpl {
         }
         Questions question = QuestionsMapper.toEntity(questionDTO, user, userRepository);
 
+//        question.setId(ThreadLocalRandom.current().nextLong(1_000_000_000_000L, Long.MAX_VALUE));
         Questions savedQuestion = questionRepository.save(question);
         logger.info("Question created with id: {}", savedQuestion.getId());
         return QuestionsMapper.toDTO(savedQuestion);

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -133,6 +134,7 @@ public class SolvedQuestionService {
         if (existingSolvedQuestion != null) {
             // Update the obtained marks
             existingSolvedQuestion.setObtainedMarks(solvedQuestionDTO.getObtainedMarks());
+//            existingSolvedQuestion.setId(ThreadLocalRandom.current().nextLong(1_000_000_000_000L, Long.MAX_VALUE));
             solvedQuestionInContestRepository.save(existingSolvedQuestion);
         } else {
             throw new RuntimeException("Solved question not found for the given contestId, studentId, and questionId.");

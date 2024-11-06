@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +35,7 @@ public class ContestResultService {
         Students student = getStudentById(contestResultDTO.getStudentId());
 
         ContestResult contestResult = ContestResultMapper.toEntity(contestResultDTO, contest, student);
+//        contestResult.setId(ThreadLocalRandom.current().nextLong(1_000_000_000_000L, Long.MAX_VALUE));
         contestResultRepository.save(contestResult);
     }
 

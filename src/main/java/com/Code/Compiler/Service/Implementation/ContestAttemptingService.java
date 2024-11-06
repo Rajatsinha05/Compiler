@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,7 +58,7 @@ public class ContestAttemptingService {
         contestAttempting.setContest(contest);
         contestAttempting.setStudent(student);
         contestAttempting.setStartTime(LocalDateTime.now()); // Start time set here
-
+//    contestAttempting.setId(ThreadLocalRandom.current().nextLong(1_000_000_000_000L, Long.MAX_VALUE));
         // Save the contest attempt to the repository
         ContestAttempting savedAttempt = contestAttemptingRepository.save(contestAttempting);
         return ContestAttemptingMapper.toDTO(savedAttempt);

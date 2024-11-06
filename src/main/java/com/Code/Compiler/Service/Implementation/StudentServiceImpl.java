@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,6 +66,7 @@ public class StudentServiceImpl {
             throw new ValidationException("Password must be at least 8 characters long");
         }
         student.setPassword(passwordEncoder.encode(password));
+//        student.setId(ThreadLocalRandom.current().nextLong(1_000_000_000_000L, Long.MAX_VALUE));
         Students savedStudent = studentRepository.save(student);
 
         return StudentMapper.toDto(savedStudent);

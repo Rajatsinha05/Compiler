@@ -23,7 +23,7 @@ import java.util.List;
 //@ToString
 public class Students implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     private String name;

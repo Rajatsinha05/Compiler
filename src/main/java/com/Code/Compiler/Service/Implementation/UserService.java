@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class UserService implements IUserService {
@@ -52,6 +54,7 @@ public class UserService implements IUserService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        user.setId(ThreadLocalRandom.current().nextLong(1_000_000_000_000L, Long.MAX_VALUE));
         User savedUser = userRepository.save(user);
 
         String token = jwtService.generateToken(savedUser.getUsername());

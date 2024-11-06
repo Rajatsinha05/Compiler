@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Examples {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String input;
     private String output;

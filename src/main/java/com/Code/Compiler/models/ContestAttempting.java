@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class ContestAttempting {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne

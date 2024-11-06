@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class ContestResultServiceImpl implements IContestResultService {
@@ -37,6 +38,7 @@ public class ContestResultServiceImpl implements IContestResultService {
                     .orElseThrow(() -> new StudentNotFoundException("Student not found with id: " + result.getStudent().getId()));
             result.setContest(contest);
             result.setStudent(student);
+//            result.setId(ThreadLocalRandom.current().nextLong(1_000_000_000_000L, Long.MAX_VALUE));
             contestResult = contestResultRepository.save(result);
         }
         return contestResult;

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,6 +88,7 @@ public class ContestServiceImpl implements IContestService {
         );
 
         Contest contest = ContestMapper.toEntity(contestDTO, user, questions, students);
+        contest.setId(ThreadLocalRandom.current().nextLong(1_000_000_000_000L, Long.MAX_VALUE));
         Contest savedContest = contestRepository.save(contest);
         return ContestMapper.toDTO(savedContest);
     }
