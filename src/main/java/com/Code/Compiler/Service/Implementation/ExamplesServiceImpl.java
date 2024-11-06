@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class ExamplesServiceImpl {
@@ -33,6 +34,7 @@ public class ExamplesServiceImpl {
         existingExample.setInput(exampleDetails.getInput());
         existingExample.setOutput(exampleDetails.getOutput());
         existingExample.setExplanation(exampleDetails.getExplanation());
+//        existingExample.setId(ThreadLocalRandom.current().nextLong(1_000_000_000_000L, Long.MAX_VALUE));
         return examplesRepository.save(existingExample);
     }
 

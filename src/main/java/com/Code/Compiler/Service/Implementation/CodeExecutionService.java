@@ -8,9 +8,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.*;
 
 @Service
 public class CodeExecutionService {
+
+    private static final int TIMEOUT_SECONDS = 25; // Set the time limit for execution
 
     public String compileAndRunCode(String code, String language, String inputData) {
         try {
@@ -39,8 +42,7 @@ public class CodeExecutionService {
                     return "Unsupported language";
             }
         } finally {
-            // Clean up: Remove temporary files
-            cleanupFiles();
+            cleanupFiles(); // Clean up temporary files
         }
     }
 
@@ -54,14 +56,16 @@ public class CodeExecutionService {
                 return readProcessOutput(compileProcess.getErrorStream());
             }
 
-            Process execProcess = new ProcessBuilder("java", "Main").start();
-            if (inputData != null && !inputData.isEmpty()) {
-                execProcess.getOutputStream().write(inputData.getBytes());
-                execProcess.getOutputStream().close();
-            }
-
-            return readProcessOutput(execProcess);
+            return executeWithTimeout(() -> {
+                Process execProcess = new ProcessBuilder("java", "Main").start();
+                if (inputData != null && !inputData.isEmpty()) {
+                    execProcess.getOutputStream().write(inputData.getBytes());
+                    execProcess.getOutputStream().close();
+                }
+                return readProcessOutput(execProcess);
+            });
         } catch (IOException | InterruptedException e) {
+            Thread.currentThread().interrupt();
             return "Error: " + e.getMessage();
         }
     }
@@ -70,13 +74,14 @@ public class CodeExecutionService {
         try {
             Files.write(Paths.get("Main.js"), code.getBytes());
 
-            Process execProcess = new ProcessBuilder("node", "Main.js").start();
-            if (inputData != null && !inputData.isEmpty()) {
-                execProcess.getOutputStream().write(inputData.getBytes());
-                execProcess.getOutputStream().close();
-            }
-
-            return readProcessOutput(execProcess);
+            return executeWithTimeout(() -> {
+                Process execProcess = new ProcessBuilder("node", "Main.js").start();
+                if (inputData != null && !inputData.isEmpty()) {
+                    execProcess.getOutputStream().write(inputData.getBytes());
+                    execProcess.getOutputStream().close();
+                }
+                return readProcessOutput(execProcess);
+            });
         } catch (IOException e) {
             return "Error: " + e.getMessage();
         }
@@ -92,14 +97,16 @@ public class CodeExecutionService {
                 return readProcessOutput(compileProcess.getErrorStream());
             }
 
-            Process execProcess = new ProcessBuilder("./Main").start();
-            if (inputData != null && !inputData.isEmpty()) {
-                execProcess.getOutputStream().write(inputData.getBytes());
-                execProcess.getOutputStream().close();
-            }
-
-            return readProcessOutput(execProcess);
+            return executeWithTimeout(() -> {
+                Process execProcess = new ProcessBuilder("./Main").start();
+                if (inputData != null && !inputData.isEmpty()) {
+                    execProcess.getOutputStream().write(inputData.getBytes());
+                    execProcess.getOutputStream().close();
+                }
+                return readProcessOutput(execProcess);
+            });
         } catch (IOException | InterruptedException e) {
+            Thread.currentThread().interrupt();
             return "Error: " + e.getMessage();
         }
     }
@@ -114,14 +121,16 @@ public class CodeExecutionService {
                 return readProcessOutput(compileProcess.getErrorStream());
             }
 
-            Process execProcess = new ProcessBuilder("./Main").start();
-            if (inputData != null && !inputData.isEmpty()) {
-                execProcess.getOutputStream().write(inputData.getBytes());
-                execProcess.getOutputStream().close();
-            }
-
-            return readProcessOutput(execProcess);
+            return executeWithTimeout(() -> {
+                Process execProcess = new ProcessBuilder("./Main").start();
+                if (inputData != null && !inputData.isEmpty()) {
+                    execProcess.getOutputStream().write(inputData.getBytes());
+                    execProcess.getOutputStream().close();
+                }
+                return readProcessOutput(execProcess);
+            });
         } catch (IOException | InterruptedException e) {
+            Thread.currentThread().interrupt();
             return "Error: " + e.getMessage();
         }
     }
@@ -130,13 +139,14 @@ public class CodeExecutionService {
         try {
             Files.write(Paths.get("Main.py"), code.getBytes());
 
-            Process execProcess = new ProcessBuilder("python3", "Main.py").start();
-            if (inputData != null && !inputData.isEmpty()) {
-                execProcess.getOutputStream().write(inputData.getBytes());
-                execProcess.getOutputStream().close();
-            }
-
-            return readProcessOutput(execProcess);
+            return executeWithTimeout(() -> {
+                Process execProcess = new ProcessBuilder("python3", "Main.py").start();
+                if (inputData != null && !inputData.isEmpty()) {
+                    execProcess.getOutputStream().write(inputData.getBytes());
+                    execProcess.getOutputStream().close();
+                }
+                return readProcessOutput(execProcess);
+            });
         } catch (IOException e) {
             return "Error: " + e.getMessage();
         }
@@ -146,13 +156,14 @@ public class CodeExecutionService {
         try {
             Files.write(Paths.get("Main.dart"), code.getBytes());
 
-            Process execProcess = new ProcessBuilder("dart", "Main.dart").start();
-            if (inputData != null && !inputData.isEmpty()) {
-                execProcess.getOutputStream().write(inputData.getBytes());
-                execProcess.getOutputStream().close();
-            }
-
-            return readProcessOutput(execProcess);
+            return executeWithTimeout(() -> {
+                Process execProcess = new ProcessBuilder("dart", "Main.dart").start();
+                if (inputData != null && !inputData.isEmpty()) {
+                    execProcess.getOutputStream().write(inputData.getBytes());
+                    execProcess.getOutputStream().close();
+                }
+                return readProcessOutput(execProcess);
+            });
         } catch (IOException e) {
             return "Error: " + e.getMessage();
         }
@@ -168,14 +179,16 @@ public class CodeExecutionService {
                 return readProcessOutput(compileProcess.getErrorStream());
             }
 
-            Process execProcess = new ProcessBuilder("node", "Main.js").start();
-            if (inputData != null && !inputData.isEmpty()) {
-                execProcess.getOutputStream().write(inputData.getBytes());
-                execProcess.getOutputStream().close();
-            }
-
-            return readProcessOutput(execProcess);
+            return executeWithTimeout(() -> {
+                Process execProcess = new ProcessBuilder("node", "Main.js").start();
+                if (inputData != null && !inputData.isEmpty()) {
+                    execProcess.getOutputStream().write(inputData.getBytes());
+                    execProcess.getOutputStream().close();
+                }
+                return readProcessOutput(execProcess);
+            });
         } catch (IOException | InterruptedException e) {
+            Thread.currentThread().interrupt();
             return "Error: " + e.getMessage();
         }
     }
@@ -190,14 +203,16 @@ public class CodeExecutionService {
                 return readProcessOutput(compileProcess.getErrorStream());
             }
 
-            Process execProcess = new ProcessBuilder("mono", "Main.exe").start();
-            if (inputData != null && !inputData.isEmpty()) {
-                execProcess.getOutputStream().write(inputData.getBytes());
-                execProcess.getOutputStream().close();
-            }
-
-            return readProcessOutput(execProcess);
+            return executeWithTimeout(() -> {
+                Process execProcess = new ProcessBuilder("mono", "Main.exe").start();
+                if (inputData != null && !inputData.isEmpty()) {
+                    execProcess.getOutputStream().write(inputData.getBytes());
+                    execProcess.getOutputStream().close();
+                }
+                return readProcessOutput(execProcess);
+            });
         } catch (IOException | InterruptedException e) {
+            Thread.currentThread().interrupt();
             return "Error: " + e.getMessage();
         }
     }
@@ -206,13 +221,14 @@ public class CodeExecutionService {
         try {
             Files.write(Paths.get("Main.php"), code.getBytes());
 
-            Process execProcess = new ProcessBuilder("php", "Main.php").start();
-            if (inputData != null && !inputData.isEmpty()) {
-                execProcess.getOutputStream().write(inputData.getBytes());
-                execProcess.getOutputStream().close();
-            }
-
-            return readProcessOutput(execProcess);
+            return executeWithTimeout(() -> {
+                Process execProcess = new ProcessBuilder("php", "Main.php").start();
+                if (inputData != null && !inputData.isEmpty()) {
+                    execProcess.getOutputStream().write(inputData.getBytes());
+                    execProcess.getOutputStream().close();
+                }
+                return readProcessOutput(execProcess);
+            });
         } catch (IOException e) {
             return "Error: " + e.getMessage();
         }
@@ -228,15 +244,33 @@ public class CodeExecutionService {
                 return readProcessOutput(compileProcess.getErrorStream());
             }
 
-            Process execProcess = new ProcessBuilder("java", "-jar", "Main.jar").start();
-            if (inputData != null && !inputData.isEmpty()) {
-                execProcess.getOutputStream().write(inputData.getBytes());
-                execProcess.getOutputStream().close();
-            }
-
-            return readProcessOutput(execProcess);
+            return executeWithTimeout(() -> {
+                Process execProcess = new ProcessBuilder("java", "-jar", "Main.jar").start();
+                if (inputData != null && !inputData.isEmpty()) {
+                    execProcess.getOutputStream().write(inputData.getBytes());
+                    execProcess.getOutputStream().close();
+                }
+                return readProcessOutput(execProcess);
+            });
         } catch (IOException | InterruptedException e) {
+            Thread.currentThread().interrupt();
             return "Error: " + e.getMessage();
+        }
+    }
+
+    private String executeWithTimeout(Callable<String> task) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<String> future = executor.submit(task);
+        try {
+            return future.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            return "Error: Time Limit Exceeded (TLE)";
+        } catch (ExecutionException | InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return "Error: " + e.getMessage();
+        } finally {
+            executor.shutdownNow();
         }
     }
 

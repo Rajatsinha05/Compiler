@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Entity
 public class CodeRequest {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
 
     private String code;
 
