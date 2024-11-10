@@ -53,8 +53,11 @@ public class UserService implements IUserService {
             throw new ValidationException("Password must be at least 8 characters long");
         }
 
+        if (user.getId() == null) {
+            user.setId(User.generateIdFromUUID()); // Generate and set Long ID from UUID
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        user.setId(ThreadLocalRandom.current().nextLong(1_000_000_000_000L, Long.MAX_VALUE));
         User savedUser = userRepository.save(user);
 
         String token = jwtService.generateToken(savedUser.getUsername());
@@ -62,6 +65,7 @@ public class UserService implements IUserService {
 
         return new UserWithToken(userDetailsToken, token);
     }
+
 
     public UserWithToken loginUser(@Valid LoginRequest loginRequest) {
         User existingUser = userRepository.findByEmail(loginRequest.getEmail());

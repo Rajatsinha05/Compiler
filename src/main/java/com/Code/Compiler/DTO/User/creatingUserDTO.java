@@ -13,5 +13,4 @@ public class creatingUserDTO {
         private String department;
         private Role role;
         private String password;
-
 }
