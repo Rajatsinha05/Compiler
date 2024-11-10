@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
@@ -24,8 +25,8 @@ import java.util.stream.Collectors;
 public class User implements UserDetails {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
     private String name;
     private String email;
@@ -99,4 +100,9 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+    public static Long generateIdFromUUID() {
+        UUID uuid = UUID.randomUUID();
+        return Math.abs(uuid.getMostSignificantBits() ^ uuid.getLeastSignificantBits());
+    }
+
 }
