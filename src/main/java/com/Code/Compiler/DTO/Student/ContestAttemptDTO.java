@@ -1,18 +1,3 @@
-package com.Code.Compiler.DTO.Student;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ContestAttemptDTO {
-    private Long id;
-    private Long contestId;
-    private String contestTitle;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private Integer totalMarks;
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a4e8ad5a8b73316fd7bc02e4438f737780887d4cf62aea9f5ad6217a2a2098d3
+size 425

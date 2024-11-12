@@ -1,15 +1,3 @@
-package com.Code.Compiler.Repository;
-
-import com.Code.Compiler.models.Contest;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
-
-@Repository
-public interface ContestRepository extends JpaRepository<Contest,Long> {
-
-    @EntityGraph(attributePaths = {"questions", "enrolledStudents"})
-    Optional<Contest> findById(Long id);
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:9568b8c39fd7d8d751ab38adccb0181630d4ffadc31e8b355057ccf632d3119f
+size 479

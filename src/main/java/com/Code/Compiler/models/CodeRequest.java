@@ -1,26 +1,3 @@
-package com.Code.Compiler.models;
-
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-public class CodeRequest {
-    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
-
-    private String code;
-
-    private String language;
-
-    private String inputData;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1b925b6b59784a4b6fad22065c98675a51feef868cd1ab60bd28e5dc27c54397
+size 712

@@ -1,34 +1,3 @@
-package com.Code.Compiler.DTO;
-
-import java.util.List;
-
-public class ContestResultDTO {
-    private Long contestId;
-    private Long studentId;
-    private List<SolvedQuestionInContestDTO> solvedQuestions;
-
-    // Getters and Setters
-    public Long getContestId() {
-        return contestId;
-    }
-
-    public void setContestId(Long contestId) {
-        this.contestId = contestId;
-    }
-
-    public Long getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(Long studentId) {
-        this.studentId = studentId;
-    }
-
-    public List<SolvedQuestionInContestDTO> getSolvedQuestions() {
-        return solvedQuestions;
-    }
-
-    public void setSolvedQuestions(List<SolvedQuestionInContestDTO> solvedQuestions) {
-        this.solvedQuestions = solvedQuestions;
-    }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:c7b7ee749fb6fdf9a7e3051ad12cb81959d99ee5b2baeae548c6e562e5fdc745
+size 795

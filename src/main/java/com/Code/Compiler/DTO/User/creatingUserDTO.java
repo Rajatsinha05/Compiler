@@ -1,16 +1,3 @@
-package com.Code.Compiler.DTO.User;
-
-import com.Code.Compiler.Enum.Role;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-public class creatingUserDTO {
-        private String name;
-        private String email;
-        private String department;
-        private Role role;
-        private String password;
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a19a7effeca9c2f9fdb637af8110f3a7933c38c0e0f2a8e95e993d91c073740d
+size 400

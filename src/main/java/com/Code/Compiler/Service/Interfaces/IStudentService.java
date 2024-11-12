@@ -1,20 +1,3 @@
-package com.Code.Compiler.Service.Interfaces;
-
-
-
-import com.Code.Compiler.models.Students;
-
-import java.util.List;
-import java.util.Optional;
-
-public interface IStudentService {
-    List<Students> getAllStudents();
-
-    Optional<Students> getStudentById(Long id);
-
-    Students createStudent(Students student);
-
-    Students updateStudentDetails(Long id, Students studentDetails);
-
-    void deleteStudent(Long id);
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:dcdbdb2a630d1ef0dbd4b588966fe15a0435542445b238eab4dcd51542b1e951
+size 417
