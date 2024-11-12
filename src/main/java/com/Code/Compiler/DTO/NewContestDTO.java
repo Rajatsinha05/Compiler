@@ -1,25 +1,3 @@
-package com.Code.Compiler.DTO;
-
-import com.Code.Compiler.Enum.DifficultLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class NewContestDTO {
-    private Long id;
-    private String title;
-    private String description;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private int totalMarks;
-    private DifficultLevel difficultyLevel;
-    private Long createdBy;  // Only the ID to avoid infinite recursion
-    private List<ContestQuestionDTO> contestQuestions;
-    private List<StudentDTO> enrolledStudents;
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1a5f90d8ab0acadb0fa9a4e937a6e6c402270c8439f93e4bd02bcb9ecc7a65cd
+size 695

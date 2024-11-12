@@ -1,14 +1,3 @@
-package com.Code.Compiler.DTO.Student;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ContestDTO {
-    private Long id;
-    private String title;
-    private String description;
-    private String difficultyLevel;
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a9ff08e08eaa7ea7e3450778e71b1289af3a11dd208eca553b2d999040bc3daf
+size 315
