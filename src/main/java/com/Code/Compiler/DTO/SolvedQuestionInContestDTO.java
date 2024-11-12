@@ -1,16 +1,3 @@
-package com.Code.Compiler.DTO;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class SolvedQuestionInContestDTO {
-    private Long questionId;
-    private Long contestId;
-    private Long studentId;
-    private Long contestQuestionId; // Reference to the assigned marks for the question in the contest
-    private int obtainedMarks;
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:1c5b9a84f0ec6814475ccc25d5f775576737ab0191d1d9fb6bcc4f7529774326
+size 383

@@ -1,27 +1,3 @@
-package com.Code.Compiler.models;
-
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-public class Examples {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String input;
-    private String output;
-    private String explanation;
-
-    @ManyToOne
-    @JoinColumn(name = "question_id")
-    private Questions question;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:e885523be3c160558b1cad0c77d638c604b6d185c3d3828db4acf258631473bb
+size 561

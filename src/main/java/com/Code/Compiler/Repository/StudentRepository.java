@@ -1,11 +1,3 @@
-package com.Code.Compiler.Repository;
-
-import com.Code.Compiler.models.Students;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface StudentRepository extends JpaRepository<Students,Long> {
-    public Students findByEmail(String email);
-
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:d48431459ea1b5960a231c8b7d2cf95f7aa1b2682142b399e580a3b57385263b
+size 410

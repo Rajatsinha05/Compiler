@@ -1,23 +1,3 @@
-package com.Code.Compiler.DTO;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class QuestionsDTO {
-    private Long id;
-    private String title;
-    private String description;
-    private String tags;
-    private String difficultLevel;
-    private String constraintValue;
-    private String input;
-    private String expectedOutput;
-    private Long userId;
-    private List<ExamplesDTO> examples;
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:6b83ff4f33debe260261f747d9c1441f02519fa243586b0c22d20670ff80f27e
+size 520

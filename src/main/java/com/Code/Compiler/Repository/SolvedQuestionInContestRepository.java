@@ -1,16 +1,3 @@
-package com.Code.Compiler.Repository;
-
-import com.Code.Compiler.models.SolvedQuestionInContest;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-@Repository
-public interface SolvedQuestionInContestRepository extends JpaRepository<SolvedQuestionInContest ,Long> {
-    SolvedQuestionInContest findByContestIdAndStudentIdAndQuestionId(Long contestId, Long studentId, Long questionId);
-
-    List<SolvedQuestionInContest> findByContestId(Long contestId);
-
-    List<SolvedQuestionInContest> findByStudentIdAndContestId(Long studentId, Long contestId);
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:a7e3db4c27b461f13761b73097c9f78d98bb908f6b43d18104394d65269cf76f
+size 636

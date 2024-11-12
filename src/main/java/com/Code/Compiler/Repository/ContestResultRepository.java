@@ -1,13 +1,3 @@
-package com.Code.Compiler.Repository;
-
-import com.Code.Compiler.models.ContestResult;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
-
-@Repository
-public interface ContestResultRepository extends JpaRepository<ContestResult,Long> {
-    Optional<ContestResult> findByContestIdAndStudentId(Long contestId, Long studentId);
-
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:634b878f99eff383756397469caecb372cc1e7d6f51704a9a3e46d958813ff9b
+size 416

@@ -1,17 +1,3 @@
-package com.Code.Compiler.Service.Interfaces;
-
-import com.Code.Compiler.DTO.ContestDTO;
-import java.util.List;
-import java.util.Optional;
-
-public interface IContestService {
-    List<ContestDTO> getAllContests();
-
-    // Get all contests by student ID
-    List<ContestDTO> getAllContestsByStudentId(Long studentId);
-
-    Optional<ContestDTO> getContestById(Long id);
-    ContestDTO createContest(ContestDTO contestDTO);
-    ContestDTO updateContestDetails(Long id, ContestDTO contestDTO);
-    void deleteContest(Long id);
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:17c214d658021dc6dcf3508228f7d112f6a300e3b1d33467c46463e15cceff4c
+size 524

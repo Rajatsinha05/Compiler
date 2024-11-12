@@ -1,23 +1,3 @@
-package com.Code.Compiler.Service.Interfaces;
-
-
-import com.Code.Compiler.DTO.UserDTO;
-import com.Code.Compiler.DTO.UserWithToken;
-import com.Code.Compiler.models.User;
-
-import java.util.List;
-import java.util.Optional;
-
-public interface IUserService {
-    List<User> getAllUsers();
-
-    Optional<User> getUserById(Long id);
-
-    UserWithToken createUser(User user);
-
-    User updateUserDetails(Long id, User userDetails);
-
-    User associateStudentsWithUser(Long userId, List<Long> studentIds);
-
-    void deleteUser(Long id);
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:8f7859ece4d178b1f9976b66849803b10771145b93d881dc623cd212ff9b2afc
+size 528
