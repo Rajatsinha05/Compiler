@@ -41,6 +41,7 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 //	implementation 'org.postgresql:postgresql:42.5.0'
+	implementation 'de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.2.0'
 
 }
 
