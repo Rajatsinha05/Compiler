@@ -10,7 +10,7 @@ module.exports = defineConfig({
       openMode: 0, // No retries during interactive mode
     },
     video: false, // Disable video recording for debugging
-    screenshot: false, // Disable screenshot
+    screenshots: false, // Disable screenshot
   },
   env: {
     environment: "staging", // Custom environment variable
