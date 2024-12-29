@@ -2,24 +2,22 @@ const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
   e2e: {
-    specPattern: "cypress/_test/e2e/**/*.cy.js", // Path to your test files
-    supportFile: false, // Disable support file if not needed
-    defaultCommandTimeout: 10000, // Timeout for commands
+    specPattern: "cypress/_test/e2e/**/*.cy.js",
+    supportFile: false,
+    defaultCommandTimeout: 10000,
     retries: {
-      runMode: 1, // Retry failed tests once in `cypress run`
-      openMode: 0, // No retries during interactive mode
+      runMode: 1,
+      openMode: 0,
     },
-    video: false, // Disable video recording for debugging
-    screenshots: false, // Disable screenshot
+    video: false,
+    screenshots: false,
+    baseUrl: `http://localhost:${process.env.PORT || 3000}`, // Dynamic port
+    reporter: "mochawesome",
+    reporterOptions: {
+      reportDir: "cypress/results",
+      overwrite: true,
+      html: false,
+      json: true,
+    },
   },
-  env: {
-    environment: "staging", // Custom environment variable
-  },
-  reporter: "mochawesome", // Use mochawesome as the reporter
-  reporterOptions: {
-    reportDir: "cypress/results", // Directory to save reports
-    overwrite: true, // Do not overwrite existing reports
-    html: false, // Disable HTML report
-    json: true // Enable JSON report
-  }
 });
