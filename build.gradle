@@ -43,7 +43,7 @@ dependencies {
 //	implementation 'org.postgresql:postgresql:42.5.0'
 	implementation 'de.huxhorn.sulky:de.huxhorn.sulky.ulid:8.2.0'
 	implementation 'com.theokanning.openai-gpt3-java:client:0.11.0'
-
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
 }
 
 tasks.named('test') {
