@@ -1,6 +1,6 @@
 describe("Custom Server Tests", () => {
 
-  it("Should load login page correctly", () => {
+  it("Should load login page correctly - marks 2", () => {
     cy.visit("http://localhost:8090/login");
  
  
@@ -8,7 +8,7 @@ describe("Custom Server Tests", () => {
   });
 
   
-  it("Should load homepage correctly", () => {
+  it("Should load homepage correctly - marks 2", () => {
     cy.visit("http://localhost:8090");
  
  
@@ -32,7 +32,7 @@ describe("Custom Server Tests", () => {
   
  
  
-  it("Should load signup page correctly", () => {
+  it("Should load signup page correctly - marks 2", () => {
     cy.visit("http://localhost:8090/signup");
  
  
@@ -40,7 +40,7 @@ describe("Custom Server Tests", () => {
   });
  
  
-  it("Should load contact page correctly", () => {
+  it("Should load contact page correctly - marks 2", () => {
     cy.visit("http://localhost:8090/contact");
  
  
@@ -48,7 +48,7 @@ describe("Custom Server Tests", () => {
   });
  
  
-  it("Should load service page correctly", () => {
+  it("Should load service page correctly - marks 2", () => {
     cy.visit("http://localhost:8090/service");
  
  
